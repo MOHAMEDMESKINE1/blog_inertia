@@ -40,6 +40,7 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
             HandleInertiaRequests::class,
+            // \App\Http\Middleware\Authenticate::class,
         ],
 
         'api' => [

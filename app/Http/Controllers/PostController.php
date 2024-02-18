@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
-use Illuminate\Http\Request;
+use App\Models\User;
 use Inertia\Inertia;
+use Illuminate\Http\Request;
+use App\Http\Requests\Post\PostRequest;
 
 class PostController extends Controller
 {
@@ -13,7 +15,8 @@ class PostController extends Controller
      */
     public function index()
     {
-       return Inertia::render('Posts/Index');
+        $posts = Post::paginate(3);
+       return Inertia::render('Posts/Index',compact('posts'));
     }
 
     /**
@@ -27,9 +30,22 @@ class PostController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(PostRequest $request)
     {
-        //
+        if(request()->hasfile('image'))
+        {
+            $file = request()->file('image');
+            $filename =  uniqid() . "." . $file->getClientOriginalExtension();;
+            $file->move("storage/posts", $filename);
+            
+            $image = $filename;
+        }        
+         User::create([
+
+            "title"=>$request->title,
+            "description"=>$request->description,
+            "image"=>$image ?? null ,
+         ]);
     }
 
     /**
@@ -37,7 +53,7 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        return Inertia::render('Posts/Details');
+        return Inertia::render('Posts/Details',compact('post'));
     }
 
     /**
