@@ -39,9 +39,9 @@ class PostController extends Controller
             $file->move("storage/posts", $filename);
             
             $image = $filename;
-        }        
-         User::create([
-
+        }
+                
+         Post::create([
             "title"=>$request->title,
             "description"=>$request->description,
             "image"=>$image ?? null ,

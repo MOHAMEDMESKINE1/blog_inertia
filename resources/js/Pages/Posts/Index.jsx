@@ -1,34 +1,26 @@
 import React, { useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import Pagination from '@/Components/Pagination';
-import { Link } from '@inertiajs/react';
+import { Link, useForm } from '@inertiajs/react';
 import { Inertia } from '@inertiajs/inertia';
 
 function Index({ auth,posts }) {
  
-    const [image,setImage] = useState(null);
-    const [values,setValues] = useState({
-        title: "title",
-        description: 'description',
-        image: null,
+    const { data, setData, errors, post } = useForm({
+        title: "",
+        description: "",
     });
 
-    const onImageChanged = () => {
-            console.log(e.target.files[0]);
-           setImage(e.target.files[0])
-    }
-    function handleChange(e) {
-        const key = e.target.id;
-        const value = e.target.value
-        setValues(values => ({
-            ...values,
-            [key]: value,
-        }))
-    }
+   
+   
+    const handleImageChange = (e) => {
+        setData('image', e.target.files[0])
+    
+    };
     const handleSubmit = (e) => {
         e.preventDefault()
 
-        Inertia.post(route('posts.store',values))
+        post(route('posts.store'))
     }
     return (
         <AuthenticatedLayout
@@ -51,13 +43,13 @@ function Index({ auth,posts }) {
                                 <h3 className="font-bold text-lg mb-1">Create Poste</h3>
                                 <form onSubmit={handleSubmit}   encType='multipart/form-data'>
                                     
-                                    <input type="text" name='title' value={values.title}  onChange={handleChange}  placeholder="Type here" className="input input-bordered w-full mb-2" />
+                                    <input type="text" name='title' value={data.title}  onChange={(e)=> setData("title",e.target.value)}  placeholder="Type here" className="input input-bordered w-full mb-2" />
 
                                    
-                                    <textarea name='description' value={values.description}  onChange={handleChange} className="textarea textarea-bordered w-full mb-2" placeholder="Bio"></textarea>
+                                    <textarea name='description' value={data.description}  onChange={(e)=> setData("description",e.target.value)} className="textarea textarea-bordered w-full mb-2" placeholder="Bio"></textarea>
                                     
                                     
-                                    <input type="file" value={values.image} onChange={onImageChanged} className="file-input file-input-bordered w-full mb-2 " />
+                                    <input type="file" name='image' onChange={handleImageChange} className="file-input file-input-bordered w-full mb-2 " />
                                     <button type='submit' className='btn mt-2 w-50'>Save </button>
                                 </form>
                             </div>
@@ -83,9 +75,10 @@ function Index({ auth,posts }) {
                                 posts.data.map(post =>(
                                     <tr className="bg-base-100">
                                         <th>{post.id}</th>
-                                        <td>
-                                            <img className='mask mask-squircle w-24' src={post.image} alt="" />
+                                        <td >
+                                            {post.image!==null ? <img src={"storage/posts/"+post.image} alt="" width={55} />:<img src={post.image} alt="" width={55} /> }
                                         </td>
+                                        
                                         <td>{post.title}</td>
                                         <td>{post.description.slice(0,80)}...</td>
                                         <td>
