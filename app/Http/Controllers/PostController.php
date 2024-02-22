@@ -72,10 +72,12 @@ class PostController extends Controller
     {
         if($request->hasfile('image'))
         {
-            $oldImage = $post->image;
-            if ($oldImage && Storage::exists("storage/posts/{$oldImage}")) {
-                Storage::delete("storage/posts/{$oldImage}");
-            }     
+            $imagePath = "storage/posts/{$post->image}";
+
+            if(file_exists($imagePath)) {
+                unlink($imagePath);
+            }
+                
 
             $file = $request->file('image');
             $filename =  uniqid() . "." . $file->getClientOriginalExtension();;
@@ -90,6 +92,9 @@ class PostController extends Controller
             "description"=>$request->description,
             "image"=>$filename
          ]);
+
+        return redirect()->route('posts.index')->with('success', 'Post updated successfully');
+
     }
 
     /**
@@ -99,8 +104,8 @@ class PostController extends Controller
     {
         $imagePath = "storage/posts/{$post->image}";
 
-        if (Storage::exists($imagePath)) {
-            Storage::delete($imagePath);
+        if(file_exists($imagePath)) {
+            unlink($imagePath);
         }
 
         // Delete the post
