@@ -10,17 +10,24 @@ function Details({auth,post }) {
         header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Dashboard</h2>}
     >
         <div className="py-12">
-            <div className=" mx-auto  sm:px-6 lg:px-8">
+            <div className="  lg:px-8">
                 <div className="bg-white p-12 overflow-hidden shadow-sm sm:rounded-lg">
                     <h1>Details/ <Link href={route('posts.index')}  className='hover:bg-gray-600 hover:p-1.5 rounded-md'><strong>Go back</strong></Link> </h1>
-                    <div className=" mx-auto flex flex-col justify-center card card-compact w-96 bg-base-100 shadow-xl">
-                        <figure><img src={post.image} alt="Shoes" /></figure>
-                        <div className="card-body">
-                            <h2 className="card-title">{post.title}</h2>
-                            <p>{post.description}</p>
-                            <p className='flex justify-end'>{post.created_at}</p>
-                           
-                        </div>
+                    <div className="hero min-h-screen bg-base-200 mt-5 rounded-md shadow-md">
+                                <div className="hero-content flex-col lg:flex-row">
+                                    <img src={"/storage/posts/"+post.image} alt={post.title}  className="max-w-sm rounded-lg shadow-2xl" />
+                                    <div>
+                                    <h1 className="text-5xl font-bold">{post.title}</h1>
+                                   <div className="mt-12">
+                                   <p className="">
+                                        {post.description}    
+                                    </p>
+                                    <p className='text-gray-500 '>{post.created_at}</p>
+                                   </div>
+
+
+                                    </div>
+                                </div>
                         </div>
 
                 </div>

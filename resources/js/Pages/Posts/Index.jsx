@@ -98,6 +98,7 @@ function Index({ auth,posts }) {
                                 <th>IMAGE</th>
                                 <th>TITLE</th>
                                 <th>DESCRIPTION</th>
+                                <th>POSTED BY</th>
                                 <th>ACTION</th>
                             </tr>
                             </thead>
@@ -117,15 +118,33 @@ function Index({ auth,posts }) {
                                         
                                         <td>{post.title}</td>
                                         <td>{post.description?.slice(10,80)}...</td>
+                                        <td>{post.user.name}</td>
                                         <td>
                                             <div className="flex flex-row jsutify-between">
-                                                <Link  href={route('posts.show',post.id)} className='mx-2'>Details</Link>
-                                                <Link  href={route('posts.edit',post.id)} className='mx-2'>Edit</Link>
-                                                <button onClick={()=>deletePost(post.id)}   className='mx-2'>Delete</button>
+                                                <Link  href={route('posts.show',post.id)} className='mx-2 p-1.5 rounded-sm text-white font-bold bg-green-500'>Details</Link>
+                                                <Link  href={route('posts.edit',post.id)} className='mx-2 p-1.5 rounded-sm text-white font-bold bg-indigo-500'>Edit</Link>
+                                                <button onClick={()=>deletePost(post.id)}   className='mx-2 p-1.5 rounded-sm text-white font-bold bg-red-500'>Delete</button>
+                                                {/* <button className="mx-2 p-1.5 rounded-sm text-white font-bold bg-red-500 "  onClick={()=>document.getElementById('deleteModal').showModal()}>Delete Poste</button>
+                                                <dialog id="deleteModal" className="modal">
+                                                <div className="modal-box  w-full">
+                                                    <form method="dialog ">
+                                                    <p onClick={()=>document.getElementById('deleteModal').close()}    className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</p>
+                                                    </form>
+                                                    <h3 className="font-bold text-lg mb-1">Delete Poste</h3>
+                                                    
+                                                            <h1>ARE U SURE  ?</h1>
+                                                        <button onClick={deletePost(post.id)} className='btn mt-2 w-50'>Save </button>
+                                                        <p onClick={()=>document.getElementById('deleteModal').close()}    className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</p>
+
+                                                
+                                                </div>
+                                                </dialog> */}
                                             </div>
                                         </td>
                                     </tr>
+                                    
                                 ))
+                                
                              }
                             </tbody>
                         </table>
