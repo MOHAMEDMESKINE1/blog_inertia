@@ -7,6 +7,7 @@ use App\Models\User;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Http\Requests\Post\PostRequest;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
@@ -44,7 +45,7 @@ class PostController extends Controller
          Post::create([
             "title"=>$request->title,
             "description"=>$request->description,
-            "image"=>$image ?? null ,
+            "image"=>$image  ,
          ]);
     }
 
@@ -61,7 +62,7 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        return Inertia::render('Posts/Edit');
+        return Inertia::render('Posts/Edit',compact('post'));
     }
 
     /**
@@ -69,7 +70,26 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
-        //
+        if($request->hasfile('image'))
+        {
+            $oldImage = $post->image;
+            if ($oldImage && Storage::exists("storage/posts/{$oldImage}")) {
+                Storage::delete("storage/posts/{$oldImage}");
+            }     
+
+            $file = $request->file('image');
+            $filename =  uniqid() . "." . $file->getClientOriginalExtension();;
+            $file->move("storage/posts", $filename);
+            
+            $post->image = $filename;
+           
+        }
+                
+        $post->update([
+            "title"=>$request->title,
+            "description"=>$request->description,
+            "image"=>$filename
+         ]);
     }
 
     /**
@@ -77,6 +97,15 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        //
+        $imagePath = "storage/posts/{$post->image}";
+
+        if (Storage::exists($imagePath)) {
+            Storage::delete($imagePath);
+        }
+
+        // Delete the post
+        $post->delete();
+
+        return redirect()->route('posts.index')->with('success', 'Post deleted successfully');
     }
 }

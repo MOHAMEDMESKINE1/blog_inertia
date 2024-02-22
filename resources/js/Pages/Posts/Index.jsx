@@ -22,6 +22,11 @@ function Index({ auth,posts }) {
 
         post(route('posts.store'))
     }
+    const deletePost = (id) => {
+       
+
+        Inertia.delete(route('posts.destroy',id))
+    }
     return (
         <AuthenticatedLayout
         user={auth.user}
@@ -76,15 +81,20 @@ function Index({ auth,posts }) {
                                     <tr className="bg-base-100">
                                         <th>{post.id}</th>
                                         <td >
-                                            {post.image!==null ? <img src={"storage/posts/"+post.image} alt="" width={55} />:<img src={post.image} alt="" width={55} /> }
+                                            { post.image ?
+                                                <img src={"storage/posts/"+post.image} alt="" width={55} />
+                                                :
+                                                <img src={post.image} alt="" width={55} />
+                                             }
                                         </td>
                                         
                                         <td>{post.title}</td>
-                                        <td>{post.description.slice(0,80)}...</td>
+                                        <td>{post.description?.slice(10,80)}...</td>
                                         <td>
                                             <div className="flex flex-row jsutify-between">
                                                 <Link  href={route('posts.show',post.id)} className='mx-2'>Details</Link>
                                                 <Link  href={route('posts.edit',post.id)} className='mx-2'>Edit</Link>
+                                                <button onClick={()=>deletePost(post.id)}   className='mx-2'>Delete</button>
                                             </div>
                                         </td>
                                     </tr>
