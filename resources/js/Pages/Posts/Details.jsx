@@ -15,7 +15,7 @@ function Details({auth,post }) {
                     <h1>Details/ <Link href={route('posts.index')}  className='hover:bg-gray-600 hover:p-1.5 rounded-md'><strong>Go back</strong></Link> </h1>
                     <div className="hero min-h-screen bg-base-200 mt-5 rounded-md shadow-md">
                                 <div className="hero-content flex-col lg:flex-row">
-                                    <img src={"/storage/posts/"+post.image} alt={post.title}  className="max-w-sm rounded-lg shadow-2xl" />
+                                    <img src={"/storage/posts/"+post.image} alt={post.title}  className="max-w-sm rounded-lg shadow-2xl mask mask-hexagon-2" />
                                     <div>
                                     <h1 className="text-5xl font-bold">{post.title}</h1>
                                    <div className="mt-12">

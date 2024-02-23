@@ -46,7 +46,9 @@ class PostController extends Controller
             "title"=>$request->title,
             "description"=>$request->description,
             "image"=>$image  ,
+            "user_id"=> auth()->user()->id
          ]);
+         return to_route('posts.index')->with('success','Post added successfully');
     }
 
     /**
@@ -74,8 +76,10 @@ class PostController extends Controller
         {
             $imagePath = "storage/posts/{$post->image}";
 
-            if(file_exists($imagePath)) {
-                unlink($imagePath);
+            if($post->image){
+                if(file_exists($imagePath)) {
+                    unlink($imagePath);
+                }
             }
                 
 
@@ -90,7 +94,7 @@ class PostController extends Controller
         $post->update([
             "title"=>$request->title,
             "description"=>$request->description,
-            "image"=>$filename
+            "image"=> $filename?? $post->image
          ]);
 
         return redirect()->route('posts.index')->with('success', 'Post updated successfully');

@@ -73,15 +73,29 @@ function Index({ auth,posts }) {
                                 <h3 className="font-bold text-lg mb-1">Create Poste</h3>
                                 <form onSubmit={handleSubmit}   encType='multipart/form-data'>
                                     
+                                    <div className="mb-2">
                                     <input type="text" name='title' value={data.title}  onChange={(e)=> setData("title",e.target.value)}  placeholder="Type here" className="input input-bordered w-full mb-2" />
-
+                                        <span className="text-red-500">
+                                            {errors.title}
+                                        </span>
+                                    </div>
                                    
+                                    <div className="mb-2">
                                     <textarea name='description' value={data.description}  onChange={(e)=> setData("description",e.target.value)} className="textarea textarea-bordered w-full mb-2" placeholder="Bio"></textarea>
-                              
+                                        <span className="text-red-500">
+                                            {errors.description}
+                                        </span>
+                                    </div>
 
                                     
                                     
+                                    <div className="mb-2">
                                     <input type="file" name='image' onChange={handleImageChange} className="file-input file-input-bordered w-full mb-2 " />
+                                    <span className="text-red-500">
+                                            {errors.image}
+                                    </span>
+                                    </div>
+
                                     <button type='submit' className='btn mt-2 w-50'>Save </button>
                                 </form>
                             </div>
@@ -110,7 +124,7 @@ function Index({ auth,posts }) {
                                         <th>{post.id}</th>
                                         <td >
                                             { post.image ?
-                                                <img  className='rounded-md' src={"storage/posts/"+post.image} alt="" width={55} />
+                                                <img  className='mask mask-hexagon-2' src={"storage/posts/"+post.image} alt="" width={55} />
                                                 :
                                                 <img src={post.image} alt="" width={55} />
                                              }
