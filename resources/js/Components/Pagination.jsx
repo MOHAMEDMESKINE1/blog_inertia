@@ -18,12 +18,13 @@ const Pagination = ({ links }) => {
                             link.url === null ?
                                     (<div
                                             className="mr-1 mb-1 px-4 py-3 text-sm leading-4 text-gray-400 border rounded"
+                                        // >{link.label.slice(0,5)}</div>) :
                                         >{link.label}</div>) :
-  
                                     (<Link
                                                 className={getClassName(link.active)}
                                                 href={ link.url }
                                             >{link.label}</Link>)
+                                            
                                     ))}
                 </div>
             </div>

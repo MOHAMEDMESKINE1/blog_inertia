@@ -27,6 +27,12 @@ export default function Authenticated({ user, header, children }) {
                                 <NavLink href={route('posts.index')} active={route().current('posts')}>
                                     Posts
                                 </NavLink>
+                                <NavLink href={route('tags.index')} active={route().current('tags')}>
+                                    Tags
+                                </NavLink>
+                                <NavLink href={route('categories.index')} active={route().current('categories')}>
+                                    Categories
+                                </NavLink>
                             </div>
                         </div>
 
