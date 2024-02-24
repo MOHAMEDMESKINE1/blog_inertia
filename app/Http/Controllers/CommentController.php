@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Post;
+use App\Models\User;
+use Inertia\Inertia;
+use App\Models\Comment;
 use Illuminate\Http\Request;
 
 class CommentController extends Controller
@@ -11,54 +15,58 @@ class CommentController extends Controller
      */
     public function index()
     {
-        //
+        $comments  = Comment::with(['user','post'])->paginate(3);
+        $posts = Post::all();
+
+        return Inertia::render('Comments/Index',compact('comments','posts'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
+  
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            "post"=>"required",
+            "content"=>"required",
+        ]);
+
+        if(!empty($request)){
+
+            Comment::create([
+                "post_id"=>$request->post,
+                "user_id"=>auth()->user()->id,
+                "content"=>$request->content,
+            ]);
+        }
+
+      
+
+        return to_route('comments.index')->with('success','comment added successfully');
+
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
+   
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request,Comment $comment)
     {
-        //
+
+        $comment->update([
+            "post"=>$request->post,
+            "user_id"=>auth()->user()->id,
+            "content"=>$request->content,
+        ]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Comment $comment)
     {
-        //
+        $comment->delete();
     }
 }

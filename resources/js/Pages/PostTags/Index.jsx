@@ -5,7 +5,7 @@ import { Link, useForm } from '@inertiajs/react';
 import { Inertia } from '@inertiajs/inertia';
 import Swal from "sweetalert2";  
 
-function Index({ auth,post_tag }) {
+function Index({ auth,postTags  }) {
 
     const { data, setData, errors, post } = useForm({
         name: "",
@@ -21,42 +21,42 @@ function Index({ auth,post_tag }) {
       };
    
     // update tag
-    const updateTag = (e) => {
-        e.preventDefault()
+    // const updateTag = (e) => {
+    //     e.preventDefault()
        
-        Inertia.put(route('post_tag.update', { tag: editingPosTag.id }), form);
-        setEditingPosTag(null);
-    }
+    //     Inertia.put(route('post_tag.update', { tag: editingPosTag.id }), form);
+    //     setEditingPosTag(null);
+    // }
 
-    // add tag
-    const handleSubmit = (e) => {
-        e.preventDefault()
+    // add postTag
+    // const handleSubmit = (e) => {
+    //     e.preventDefault()
 
-        post(route('post_tag.store'))
-    }
-    // delete tag
-    const deleteTag = (id) => {
+    //     post(route('post_tag.store'))
+    // }
+    // delete postTag
+    // const deletePosTag = (id) => {
 
-        Swal.fire({
-            title: "Are you sure?",
-            text: "You won't be able to revert this!",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Yes, delete it!"
-          }).then((result) => {
-            if (result.isConfirmed) {
+    //     Swal.fire({
+    //         title: "Are you sure?",
+    //         text: "You won't be able to revert this!",
+    //         icon: "warning",
+    //         showCancelButton: true,
+    //         confirmButtonColor: "#3085d6",
+    //         cancelButtonColor: "#d33",
+    //         confirmButtonText: "Yes, delete it!"
+    //       }).then((result) => {
+    //         if (result.isConfirmed) {
 
-                Inertia.delete(route('post_tag.destroy',id))
-                Swal.fire({
-                    title: "Deleted!",
-                    text: "Your file has been deleted.",
-                    icon: "success"
-                });
-            }
-          });
-    }
+    //             Inertia.delete(route('post_tag.destroy',id))
+    //             Swal.fire({
+    //                 title: "Deleted!",
+    //                 text: "Your file has been deleted.",
+    //                 icon: "success"
+    //             });
+    //         }
+    //       });
+    // }
    
     return (
         <AuthenticatedLayout
@@ -69,7 +69,7 @@ function Index({ auth,post_tag }) {
                 <div className="bg-white p-12 overflow-hidden shadow-sm sm:rounded-lg">
                     <h1 className=''>Posts</h1>
                     {/* modal */}
-                        <div className="flex justify-end w-full">
+                        {/* <div className="flex justify-end w-full">
                         <button className="btn btn-outline btn-info  w-56 text-gray-900 w-75 p-1.5 rounded-sm shadow-sm my-3 "  onClick={()=>document.getElementById('createModal').showModal()}>Add Tag</button>
                             <dialog id="createModal" className="modal">
                                 <div className="modal-box  w-full">
@@ -90,9 +90,9 @@ function Index({ auth,post_tag }) {
                                     </form>
                                 </div>
                             </dialog>
-                        </div>
-                    
+                        </div> */}
                     {/*  Create modal */}
+
                     <div className="overflow-x-auto">
                         <table className="table  rounded  bg-gray-500  text-center shadow-sm" >
                             {/* head */}
@@ -109,23 +109,30 @@ function Index({ auth,post_tag }) {
                             <tbody>
                             {/* row 1 */}
                              {
-                                post_tag.data.map(tag =>(
-                                    <tr  key={tag.id} className="bg-base-100">
-                                        <th>{tag.id}</th>
-                                       
+                                postTags.data.map(postTag =>(
+                                    <tr  key={postTag.id} className="bg-base-100">
+                                        <th>{postTag.id}</th>
+                                   
                                         
-                                        <td>{tag.name}</td>
-                                        <td>{tag.created_at}</td>
+                                        <th>
+                                        {/* {
+                                            postTag.posts.map(post =>(
+                                                <th>{post.title}</th>
+                                            ))
+                                        } */}
+                                        {postTag.title}
+                                        </th>
+                                        <th>{postTag.created_at}</th>
                                        
                                         <td>
                                             <div className="flex  justify-center mx-auto">
                                                 <button  className='mx-2 p-1.5 rounded-sm text-white font-bold bg-green-500'
                                                  onClick={() => {
-                                                     openEditModal(tag)
+                                                     openEditModal(postTag)
                                                      document.getElementById('editModal').showModal()
 
                                                 }  }>Edit</button>
-                                                <button onClick={()=>deleteTag(tag.id)}   className='mx-2 p-1.5 rounded-sm text-white font-bold bg-red-500'>Delete</button>
+                                                <button onClick={()=>deletePosTag(postTag.id)}   className='mx-2 p-1.5 rounded-sm text-white font-bold bg-red-500'>Delete</button>
                                             </div>
                                         </td>
                                     </tr>
@@ -135,10 +142,11 @@ function Index({ auth,post_tag }) {
                              }
                             </tbody>
                         </table>
+                        
                     </div>    
                     
                     {/* Edit Modal */}
-                        <dialog  id="editModal" className="modal">
+                        {/* <dialog  id="editModal" className="modal">
                             <div className="modal-box  w-full">
                                 <form method="dialog ">
                                 <p onClick={()=>document.getElementById('editModal').close()}    className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</p>
@@ -161,10 +169,10 @@ function Index({ auth,post_tag }) {
                                     <div  className='btn mt-2 w-50 mx-2' onClick={() => document.getElementById('editModal').close()}>Cancel</div>
                                 </form>
                             </div>
-                         </dialog>
+                         </dialog> */}
                     {/* Edit Modal */}
                     <div className="flex justify-center my-5">
-                            <Pagination links={post_tag.links}/>
+                            <Pagination links={postTags.links}/>
                             
                     </div>
                 </div>

@@ -9,7 +9,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Tag extends Model
 {
     use HasFactory;
+    protected $table = 'tags';
     protected $fillable = ['name'];
+    
     public function getCreatedAtAttribute($value)
     {
         return Carbon::parse($value)->diffForHumans();

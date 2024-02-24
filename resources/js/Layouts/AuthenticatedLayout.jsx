@@ -33,6 +33,12 @@ export default function Authenticated({ user, header, children }) {
                                 <NavLink href={route('categories.index')} active={route().current('categories')}>
                                     Categories
                                 </NavLink>
+                                <NavLink href={route('post_tag.index')} active={route().current('post_tag')}>
+                                    Posts Tag
+                                </NavLink>
+                                <NavLink href={route('comments.index')} active={route().current('comments')}>
+                                    Comments
+                                </NavLink>
                             </div>
                         </div>
 

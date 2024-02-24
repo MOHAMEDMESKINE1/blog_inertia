@@ -2,21 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\PosTag;
+use App\Models\Post;
+use App\Models\PostTag;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class PosTagController extends Controller
+class PostTagController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-         $post_tag = PosTag::paginate(3);
+        $postTags  = PostTag::with(['posts','tags'])->paginate(3);
 
-
-         return Inertia::render('PosTags/Index',compact('post_tag'));
+        return Inertia::render('PostTags/Index',compact('postTags'));
     }
 
     /**
@@ -32,7 +32,7 @@ class PosTagController extends Controller
      */
     public function store(Request $request)
     {
-        //
+      
     }
 
     /**

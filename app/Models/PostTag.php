@@ -3,20 +3,23 @@
 namespace App\Models;
 
 use Carbon\Carbon;
-use App\Models\Post;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class PosTag extends Model
+class PostTag extends Model
 {
     use HasFactory;
-    protected $guarded = [""];
+    protected $fillable = ["post_id","tag_id","post_tags_id"];
+   
 
     public function posts()
     {
-        return $this->belongsToMany(Post::class);
+        return $this->belongsToMany(Post::class,'post_tags','post_id','tag_id');
     }
-    
+    public function tags()
+    {
+        return $this->belongsTo(Tag::class);
+    }
     public function getCreatedAtAttribute($value)
     {
         return Carbon::parse($value)->diffForHumans();
