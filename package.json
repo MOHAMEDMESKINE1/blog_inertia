@@ -26,7 +26,12 @@
         "@inertiajs/react": "^1.0.14",
         "@tinymce/tinymce-react": "^4.3.2",
         "@vitejs/plugin-react": "^4.2.1",
+        "apexcharts": "^3.46.0",
+        "chart.js": "^4.4.1",
+        "lodash": "^4.17.21",
         "react": "^18.2.0",
+        "react-apexcharts": "^1.4.1",
+        "react-chartjs-2": "^5.2.0",
         "react-dom": "^18.2.0",
         "sweetalert2": "^11.10.5",
         "sweetalert2-react-content": "^5.0.7"

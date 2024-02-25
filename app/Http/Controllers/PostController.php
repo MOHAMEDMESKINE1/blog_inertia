@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use App\Models\User;
 use Inertia\Inertia;
+use App\Models\Comment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Requests\Post\PostRequest;
 use Illuminate\Support\Facades\Storage;
 
@@ -14,9 +16,50 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      */
+
+    public function charts(){
+        
+        $postsByDay = Post::select(DB::raw('date(created_at) as date'), DB::raw('count(*) as post_count'))
+            ->groupBy(DB::raw('date(created_at)'))
+            ->orderBy('date', 'asc')->get();
+            
+        // dd($postsByDay);
+
+        $commentsByDay = Comment::select(DB::raw('date(created_at) as date'), DB::raw('count(*) as comment_count'))
+            ->groupBy(DB::raw('date(created_at)'))
+            ->orderBy('date', 'asc')
+            ->get();
+
+        return Inertia::render('Dashboard', [
+            'postsByDay' => $postsByDay,
+            'commentsByDay' => $commentsByDay,
+        ]);
+    }
     public function index()
     {
-        $posts = Post::with('user')->paginate(3);
+        // Check if a search query is present
+        $searchQuery = request()->input('search');
+    
+        // If there's a search query, filter posts by title; otherwise, get all posts
+        $postsQuery =!empty( $searchQuery)
+            ? Post::with('user')
+                    ->where(function ($query) use ($searchQuery) {
+
+                        $query->where('title', 'like', '%' . strtoupper($searchQuery) . '%')
+
+                         ->orWhereHas('user', function ($userQuery) use ($searchQuery) {
+
+                          $userQuery->where('name', 'like', '%' .strtoupper($searchQuery). '%');
+                        });
+            })
+            : Post::with('user');
+    
+        // Paginate the results
+
+            $posts = $postsQuery->paginate(3);
+        
+         
+
        return Inertia::render('Posts/Index',compact('posts'));
     }
 
@@ -26,6 +69,26 @@ class PostController extends Controller
     public function create()
     {
         //
+    }
+    public function orderBy(){
+
+        $query = request()->input('orderby');
+
+        if ($query && in_array(strtolower($query), ['asc', 'desc'])) {
+
+            $posts = Post::with('user')->orderBy("title", $query)->paginate(3);
+
+        } else {
+            // Default to "asc" if the provided order is invalid
+            $posts = Post::with('user')->orderBy("title",'asc')->paginate(3);
+        }
+
+     
+
+        
+
+        return Inertia::render('Posts/Index',compact('posts'));
+
     }
 
     /**

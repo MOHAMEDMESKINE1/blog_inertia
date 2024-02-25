@@ -3,6 +3,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import Pagination from '@/Components/Pagination';
 import { Link, useForm } from '@inertiajs/react';
 import { Inertia } from '@inertiajs/inertia';
+import { debounce } from 'lodash';
 // import { Editor } from '@tinymce/tinymce-react';
 /*
   <div id="editor">
@@ -34,7 +35,36 @@ function Index({ auth,posts }) {
         description: "",
     });
    
+
+    const [searchTerm, setSearchTerm] = useState('');
+    // const [orderby, setOrderby] = useState('');
+
+    const debounceSearch = debounce((term)=>{
+
+        Inertia.get(route('posts.index', { search: term }));
+          
+    },500)
   
+    const handleInputChange = (e) => {
+        const newSearchTerm = e.target.value;
+        setSearchTerm(newSearchTerm);
+        debounceSearch(newSearchTerm)
+
+    };
+
+    // const handleOrderbyChange = (newOrderby) => {
+    //     // setOrderby( e.target.value)
+    //     // const order = e.target.value;
+
+    //     setOrderby(newOrderby);
+    //     Inertia.get(route('posts.orderby', {orderby:newOrderby}));
+
+    //     // Inertia.get(`/posts?order=${newOrderby}`);
+
+        
+
+    // };
+
 
    
     const handleImageChange = (e) => {
@@ -103,7 +133,28 @@ function Index({ auth,posts }) {
                         </div>
                     {/* modal */}
 
+
                     <div className="overflow-x-auto">
+
+
+                        <div className="my-2 flex justify-end">
+
+                        <input className="input input-bordered  mx-2 mb-2" placeholder='search ...' type="text" name='search' value={searchTerm} onChange={handleInputChange} />
+                        {/* <button className='btn btn-outline btn-success' onClick={debounceSearch}>Search</button> */}
+
+                        </div>
+
+                        {/* orderBy */}
+                        {/* <select name='orderby' value={orderby}  onChange={(e) => handleOrderbyChange(e.target.value)}className="select select-bordered w-full max-w-xs">
+                            <option disabled selected>Order By</option>
+                            <option value={'asc'}>Ascending</option>
+                            <option value={'desc'}>Descendig</option>
+                        </select>
+
+                        */}
+
+
+
                         <table className="table  rounded  bg-gray-500  text-center shadow-sm" >
                             {/* head */}
                             <thead className='text-white'>
@@ -138,21 +189,7 @@ function Index({ auth,posts }) {
                                                 <Link  href={route('posts.show',post.id)} className='mx-2 p-1.5 rounded-sm text-white font-bold bg-green-500'>Details</Link>
                                                 <Link  href={route('posts.edit',post.id)} className='mx-2 p-1.5 rounded-sm text-white font-bold bg-indigo-500'>Edit</Link>
                                                 <button onClick={()=>deletePost(post.id)}   className='mx-2 p-1.5 rounded-sm text-white font-bold bg-red-500'>Delete</button>
-                                                {/* <button className="mx-2 p-1.5 rounded-sm text-white font-bold bg-red-500 "  onClick={()=>document.getElementById('deleteModal').showModal()}>Delete Poste</button>
-                                                <dialog id="deleteModal" className="modal">
-                                                <div className="modal-box  w-full">
-                                                    <form method="dialog ">
-                                                    <p onClick={()=>document.getElementById('deleteModal').close()}    className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</p>
-                                                    </form>
-                                                    <h3 className="font-bold text-lg mb-1">Delete Poste</h3>
-                                                    
-                                                            <h1>ARE U SURE  ?</h1>
-                                                        <button onClick={deletePost(post.id)} className='btn mt-2 w-50'>Save </button>
-                                                        <p onClick={()=>document.getElementById('deleteModal').close()}    className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</p>
-
-                                                
-                                                </div>
-                                                </dialog> */}
+                                               
                                             </div>
                                         </td>
                                     </tr>
