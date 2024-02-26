@@ -45,18 +45,19 @@ class PostController extends Controller
             ? Post::with('user')
                     ->where(function ($query) use ($searchQuery) {
 
-                        $query->where('title', 'like', '%' . strtoupper($searchQuery) . '%')
+                        $query->where('title', 'like', '%' . $searchQuery . '%')
 
                          ->orWhereHas('user', function ($userQuery) use ($searchQuery) {
 
-                          $userQuery->where('name', 'like', '%' .strtoupper($searchQuery). '%');
+                          $userQuery->where('name', 'like', '%' .$searchQuery. '%');
+
                         });
             })
             : Post::with('user');
     
         // Paginate the results
 
-            $posts = $postsQuery->paginate(3);
+        $posts = $postsQuery->paginate(3);
         
          
 

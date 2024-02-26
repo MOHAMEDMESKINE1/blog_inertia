@@ -18,9 +18,14 @@ class PostTag extends Model
     }
     public function tags()
     {
-        return $this->belongsTo(Tag::class);
+        return $this->belongsTo(Tag::class,'tag_id');
     }
+
     public function getCreatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->diffForHumans();
+    }
+    public function getUpdatedAtAttribute($value)
     {
         return Carbon::parse($value)->diffForHumans();
     }

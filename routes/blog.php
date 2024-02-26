@@ -14,6 +14,7 @@ Route::middleware('auth')->group(function(){
     Route::resource('posts',PostController::class);
    
     Route::controller(PostController::class)->group(function(){
+        
         Route::get('posts/order','orderBy')->name('posts.orderby');
 
         Route::get('dashboard','charts')->name('dashboard');

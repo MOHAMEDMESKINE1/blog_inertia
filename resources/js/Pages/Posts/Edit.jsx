@@ -27,6 +27,7 @@ function Edit({auth,post}) {
         e.preventDefault();
     
         const form = new FormData();
+        
         form.append('title', formData.title);
         form.append('description', formData.description);
         form.append('image', formData.image);

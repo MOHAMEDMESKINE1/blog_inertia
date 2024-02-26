@@ -1,32 +1,13 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import Pagination from '@/Components/Pagination';
 import { Link, useForm } from '@inertiajs/react';
 import { Inertia } from '@inertiajs/inertia';
 import { debounce } from 'lodash';
 // import { Editor } from '@tinymce/tinymce-react';
-/*
-  <div id="editor">
-<Editor
-value={data.description}
-textareaName='description'
-onChange={(e)=> setData("description",e.target.value)}
-apiKey='9ht12wb5tyqgqpg6jr12rkaora4vvi3qq3fb4fdlpdvwpe4v'
-init={{
-plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate ai mentions tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss',
-toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
-tinycomments_mode: 'embedded',
-tinycomments_author: 'Author name',
-mergetags_list: [
-{ value: 'First.Name', title: 'First Name' },
-{ value: 'Email', title: 'Email' },
-],
-ai_request: (request, respondWith) => respondWith.string(() => Promise.reject("See docs to implement AI Assistant")),
-}}
-initialValue="Welcome to TinyMCE!"
-/>
-</div>
-*/
+
+
+import { Post } from '@/Post';
 
 function Index({ auth,posts }) {
 
@@ -39,34 +20,26 @@ function Index({ auth,posts }) {
     const [searchTerm, setSearchTerm] = useState('');
     // const [orderby, setOrderby] = useState('');
 
-    const debounceSearch = debounce((term)=>{
+    // const debounceSearch = debounce((term)=>{
 
-        Inertia.get(route('posts.index', { search: term }));
+    //     Inertia.get(route('posts.index', { search: term }));
           
-    },500)
+    // },500)
+    // Post.debounceSearch()
   
     const handleInputChange = (e) => {
         const newSearchTerm = e.target.value;
         setSearchTerm(newSearchTerm);
         debounceSearch(newSearchTerm)
-
     };
 
-    // const handleOrderbyChange = (newOrderby) => {
-    //     // setOrderby( e.target.value)
-    //     // const order = e.target.value;
 
-    //     setOrderby(newOrderby);
-    //     Inertia.get(route('posts.orderby', {orderby:newOrderby}));
+    const debounceSearch = ((term)=>{
 
-    //     // Inertia.get(`/posts?order=${newOrderby}`);
+        Inertia.get(route('posts.index', { search: term }));
+          
+    })
 
-        
-
-    // };
-
-
-   
     const handleImageChange = (e) => {
         setData('image', e.target.files[0])
     
@@ -76,11 +49,20 @@ function Index({ auth,posts }) {
 
         post(route('posts.store'))
     }
+
+   
+
     const deletePost = (id) => {
        
 
         Inertia.delete(route('posts.destroy',id))
     }
+    // useEffect(() => {
+    //     return () => {
+    //         debounceSearch.cancel();
+    //     };
+    //   }, [posts]);
+
     return (
         <AuthenticatedLayout
         user={auth.user}
@@ -96,12 +78,12 @@ function Index({ auth,posts }) {
                         <button className="btn btn-outline text-gray-900 p-1.5 rounded-sm shadow-sm my-3 "  onClick={()=>document.getElementById('createModal').showModal()}>Create Poste</button>
                             <dialog id="createModal" className="modal">
                             <div className="modal-box  w-full">
-                                <form method="dialog ">
+                                <form method="dialog " onSubmit={handleSubmit}> 
                                 {/* if there is a button in form, it will close the modal */}
                                 <p onClick={()=>document.getElementById('createModal').close()}    className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</p>
                                 </form>
                                 <h3 className="font-bold text-lg mb-1">Create Poste</h3>
-                                <form onSubmit={handleSubmit}   encType='multipart/form-data'>
+                                <form    encType='multipart/form-data'>
                                     
                                     <div className="mb-2">
                                     <input type="text" name='title' value={data.title}  onChange={(e)=> setData("title",e.target.value)}  placeholder="Type here" className="input input-bordered w-full mb-2" />
@@ -116,6 +98,27 @@ function Index({ auth,posts }) {
                                             {errors.description}
                                         </span>
                                     </div>
+                                        {/* <div id="editor">
+                                            <Editor
+                                            value={data.description}
+                                            textareaName='description'
+                                            onChange={(e)=> setData("description",e.target.value)}
+                                            apiKey='9ht12wb5tyqgqpg6jr12rkaora4vvi3qq3fb4fdlpdvwpe4v'
+                                            init={{
+                                            plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate ai mentions tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss',
+                                            toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+                                            tinycomments_mode: 'embedded',
+                                            tinycomments_author: 'Author name',
+                                            mergetags_list: [
+                                            { value: 'First.Name', title: 'First Name' },
+                                            { value: 'Email', title: 'Email' },
+                                            ],
+                                            ai_request: (request, respondWith) => respondWith.string(() => Promise.reject("See docs to implement AI Assistant")),
+                                            }}
+                                            initialValue="Welcome to TinyMCE!"
+                                            />
+                                        </div> */
+                                        }
 
                                     
                                     
@@ -126,7 +129,7 @@ function Index({ auth,posts }) {
                                     </span>
                                     </div>
 
-                                    <button type='submit' className='btn mt-2 w-50'>Save </button>
+                                    <button  type='submit' className='btn mt-2 w-50'>Save </button>
                                 </form>
                             </div>
                             </dialog>
