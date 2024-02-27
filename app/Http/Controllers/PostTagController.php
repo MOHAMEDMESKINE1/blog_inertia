@@ -41,7 +41,7 @@ class PostTagController extends Controller
       
         PostTag::create($request->all());
 
-        return to_route('post_tag.index')->with('message','Post Tag Added Successfully');
+        return to_route('post_tag.index')->with('success','Post Tag Added Successfully');
 
     }
 
@@ -68,11 +68,12 @@ class PostTagController extends Controller
     {
         
         $postTag->update([
+            
             "post_id"=>$request->post_id,
             "tag_id"=>$request->tag_id,
         ]);
 
-        return to_route('post_tag.index')->with('message','Post Tag updated Successfully');
+        return to_route('post_tag.index')->with('success','Post Tag updated Successfully');
 
     }
 
@@ -83,7 +84,7 @@ class PostTagController extends Controller
     {
         $postTag->delete();
 
-        return to_route('post_tag.index')->with('message','Post Tag Added Successfully');
+        return to_route('post_tag.index')->with('success','Post Tag Added Successfully');
 
     }
 }

@@ -23,6 +23,6 @@ Route::middleware('auth')->group(function(){
 
     Route::resource('tags',TagController::class)->except(['create', 'edit', 'show']);
     Route::resource('categories',CategoryController::class)->except(['create', 'edit', 'show']);
-    Route::resource('post_tag',PostTagController::class);
+    Route::resource('post_tag',PostTagController::class)->except(['create', 'edit', 'show']);;
     Route::resource('comments',CommentController::class)->except(['create', 'edit', 'show']);
 });

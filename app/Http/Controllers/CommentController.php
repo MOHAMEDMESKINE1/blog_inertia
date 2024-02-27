@@ -56,10 +56,13 @@ class CommentController extends Controller
     {
 
         $comment->update([
-            "post"=>$request->post,
+
+            "post_id"=>$request->post,
             "user_id"=>auth()->user()->id,
             "content"=>$request->content,
         ]);
+        return to_route('comments.index')->with('success','comment added successfully');
+
     }
 
     /**

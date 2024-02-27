@@ -6,10 +6,9 @@ import { Inertia } from '@inertiajs/inertia';
 import { debounce } from 'lodash';
 // import { Editor } from '@tinymce/tinymce-react';
 
+function Index({ auth,posts,flash }) {
 
-import { Post } from '@/Post';
-
-function Index({ auth,posts }) {
+    // const {flash} = usePage().props;
 
     const { data, setData, errors, post } = useForm({
         title: "",
@@ -18,6 +17,7 @@ function Index({ auth,posts }) {
    
 
     const [searchTerm, setSearchTerm] = useState('');
+  
     // const [orderby, setOrderby] = useState('');
 
     // const debounceSearch = debounce((term)=>{
@@ -57,11 +57,9 @@ function Index({ auth,posts }) {
 
         Inertia.delete(route('posts.destroy',id))
     }
-    // useEffect(() => {
-    //     return () => {
-    //         debounceSearch.cancel();
-    //     };
-    //   }, [posts]);
+    useEffect(() => {
+       
+    }, [flash]);
 
     return (
         <AuthenticatedLayout
@@ -72,18 +70,36 @@ function Index({ auth,posts }) {
             
             <div className="mx-auto sm:px-6 lg:px-8">
                 <div className="bg-white p-12 overflow-hidden shadow-sm sm:rounded-lg">
-                    <h1 className=''>Posts</h1>
+                    <h1 className=''>Posts </h1>
+                     {
+                        flash &&   flash.success &&(
+
+                            <div role="alert" className="alert alert-success my-2" >
+
+                            <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            
+                            <span className='text-white font-bold'>{flash.success}</span>
+
+                            </div>
+                            )
+          
+                    }
+
+                   
+
                     {/* modal */}
                         <div className="flex justify-end w-full">
                         <button className="btn btn-outline text-gray-900 p-1.5 rounded-sm shadow-sm my-3 "  onClick={()=>document.getElementById('createModal').showModal()}>Create Poste</button>
                             <dialog id="createModal" className="modal">
                             <div className="modal-box  w-full">
-                                <form method="dialog " onSubmit={handleSubmit}> 
+                                <form method="dialog " > 
                                 {/* if there is a button in form, it will close the modal */}
                                 <p onClick={()=>document.getElementById('createModal').close()}    className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</p>
                                 </form>
                                 <h3 className="font-bold text-lg mb-1">Create Poste</h3>
-                                <form    encType='multipart/form-data'>
+                               
+                              
+                                <form   onSubmit={handleSubmit} encType='multipart/form-data'>
                                     
                                     <div className="mb-2">
                                     <input type="text" name='title' value={data.title}  onChange={(e)=> setData("title",e.target.value)}  placeholder="Type here" className="input input-bordered w-full mb-2" />

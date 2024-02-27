@@ -105,14 +105,18 @@ class PostController extends Controller
             
             $image = $filename;
         }
-                
-         Post::create([
-            "title"=>$request->title,
-            "description"=>$request->description,
-            "image"=>$image  ,
-            "user_id"=> auth()->user()->id
-         ]);
-         return to_route('posts.index')->with('success','Post added successfully');
+         
+        if(!empty($request))
+            Post::create([
+                "title"=>$request->title,
+                "description"=>$request->description,
+                "image"=>$image  ,
+                "user_id"=> auth()->user()->id
+             ]);
+             
+            return to_route('posts.index')->with('success','Post added successfully');
+        
+      
     }
 
     /**
