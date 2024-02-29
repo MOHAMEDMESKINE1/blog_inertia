@@ -3,13 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
-use App\Models\User;
 use Inertia\Inertia;
 use App\Models\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\Post\PostRequest;
-use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
@@ -35,32 +33,32 @@ class PostController extends Controller
             'commentsByDay' => $commentsByDay,
         ]);
     }
-    public function index()
+    public function index(Request $request)
     {
+        
         // Check if a search query is present
-        $searchQuery = request()->input('search');
+         $searchQuery = $request->search;
     
         // If there's a search query, filter posts by title; otherwise, get all posts
-        $postsQuery =!empty( $searchQuery)
+        $postsQuery = request()->input('search')
+
             ? Post::with('user')
-                    ->where(function ($query) use ($searchQuery) {
+                    ->when(function ($query) use ($request) {
 
-                        $query->where('title', 'like', '%' . $searchQuery . '%')
+                    return     $query->where('title', 'like', '%' . strtolower($request->search) . '%')
 
-                         ->orWhereHas('user', function ($userQuery) use ($searchQuery) {
+                         ->orWhereHas('user', function ($userQuery) use ($request) {
 
-                          $userQuery->where('name', 'like', '%' .$searchQuery. '%');
+                          $userQuery->where('name', 'like', '%' .strtolower($request->search). '%');
 
                         });
             })
             : Post::with('user');
-    
-        // Paginate the results
 
         $posts = $postsQuery->paginate(3);
-        
-         
 
+
+       
        return Inertia::render('Posts/Index',compact('posts'));
     }
 

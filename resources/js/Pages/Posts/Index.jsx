@@ -4,6 +4,7 @@ import Pagination from '@/Components/Pagination';
 import { Link, useForm } from '@inertiajs/react';
 import { Inertia } from '@inertiajs/inertia';
 import { debounce } from 'lodash';
+import Swal from 'sweetalert2';
 // import { Editor } from '@tinymce/tinymce-react';
 
 function Index({ auth,posts,flash }) {
@@ -17,49 +18,58 @@ function Index({ auth,posts,flash }) {
    
 
     const [searchTerm, setSearchTerm] = useState('');
-  
-    // const [orderby, setOrderby] = useState('');
-
-    // const debounceSearch = debounce((term)=>{
-
-    //     Inertia.get(route('posts.index', { search: term }));
-          
-    // },500)
-    // Post.debounceSearch()
-  
+    
+    // search change input
     const handleInputChange = (e) => {
-        const newSearchTerm = e.target.value;
-        setSearchTerm(newSearchTerm);
-        debounceSearch(newSearchTerm)
+        setSearchTerm(e.target.value);
+      
     };
-
-
-    const debounceSearch = ((term)=>{
-
-        Inertia.get(route('posts.index', { search: term }));
-          
-    })
-
+  
+    // store image
     const handleImageChange = (e) => {
         setData('image', e.target.files[0])
     
     };
+    // store
     const handleSubmit = (e) => {
-        e.preventDefault()
+    e.preventDefault()
 
         post(route('posts.store'))
     }
 
-   
-
+    // delete
     const deletePost = (id) => {
-       
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+          }).then((result) => {
+            if (result.isConfirmed) {
 
-        Inertia.delete(route('posts.destroy',id))
+                Inertia.delete(route('posts.destroy',id))
+                Swal.fire({
+                    title: "Deleted!",
+                    text: "Your file has been deleted.",
+                    icon: "success"
+                });
+            }
+          });
     }
+    // search
+          // handleSearch 
+          const handleSearch = () => {
+            // Perform the search and redirect to the search results page
+    
+            Inertia.get(route('posts.index'),{search:searchTerm} );
+          };
     useEffect(() => {
-       
-    }, [flash]);
+        handleSearch();
+
+    }, [flash,searchTerm]);
 
     return (
         <AuthenticatedLayout
@@ -158,21 +168,20 @@ function Index({ auth,posts,flash }) {
 
                         <div className="my-2 flex justify-end">
 
-                        <input className="input input-bordered  mx-2 mb-2" placeholder='search ...' type="text" name='search' value={searchTerm} onChange={handleInputChange} />
-                        {/* <button className='btn btn-outline btn-success' onClick={debounceSearch}>Search</button> */}
+                        <form  onSubmit={handleSearch} method='get'>
+                        <input
+                         type="text"
+                          name='search' 
+                          value={searchTerm} 
+                          onChange={handleInputChange} 
+                        //  onChange={(e) =>setSearchTerm(e.target.value)}
+                           className="input input-bordered  mx-2 mb-2" 
+                          placeholder='search ...' />
+                          
+                        <button type='submit' className='btn btn-outline btn-success'>Search</button>
 
+                        </form>
                         </div>
-
-                        {/* orderBy */}
-                        {/* <select name='orderby' value={orderby}  onChange={(e) => handleOrderbyChange(e.target.value)}className="select select-bordered w-full max-w-xs">
-                            <option disabled selected>Order By</option>
-                            <option value={'asc'}>Ascending</option>
-                            <option value={'desc'}>Descendig</option>
-                        </select>
-
-                        */}
-
-
 
                         <table className="table  rounded  bg-gray-500  text-center shadow-sm" >
                             {/* head */}
