@@ -30,31 +30,7 @@ const Pagination = ({ links }) => {
             </div>
         )
     );
-//   return (
-//     <div>
-//       {links.length > 3 && (
-//         <div className="flex flex-wrap -mb-1">
-//           {links.map((link, index) => (
-//             <div
-//               key={index}
-//               className={`mr-1 mb-1 px-4 py-3 text-sm leading-4 ${
-//                 link.url === null
-//                   ? 'text-gray-400 border rounded'
-//                   : `border rounded hover:bg-white focus:border-indigo-500 focus:text-indigo-500 ${link.active ? 'bg-blue-700 text-white' : ''}`
-//               }`}
-//             >
-//               {link.url !== null && (
-//                 <Link href={link.url} className="px-4 py-3 text-sm leading-4">
-//                   {link.label}
-//                 </Link>
-//               )}
-//             </div>
-//           ))}
-//         </div>
-//       )} 
-     
-//     </div>
-//   );
+
 };
 
 export default Pagination;

@@ -7,7 +7,9 @@ use Inertia\Inertia;
 use App\Models\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\Post\PostRequest;
+use App\Mail\MyPostMail;
 
 class PostController extends Controller
 {
@@ -35,12 +37,9 @@ class PostController extends Controller
     }
     public function index(Request $request)
     {
-        
-        // Check if a search query is present
-         $searchQuery = $request->search;
-    
-        // If there's a search query, filter posts by title; otherwise, get all posts
-        $postsQuery = request()->input('search')
+
+
+        $postQuery =$request->search
 
             ? Post::with('user')
                     ->when(function ($query) use ($request) {
@@ -55,7 +54,7 @@ class PostController extends Controller
             })
             : Post::with('user');
 
-        $posts = $postsQuery->paginate(3);
+        $posts = $postQuery->paginate(3);
 
 
        
@@ -69,22 +68,18 @@ class PostController extends Controller
     {
         //
     }
-    public function orderBy(){
+    public function orderBy( Request $request){
 
-        $query = request()->input('orderby');
+        $query = $request->orderby;
 
-        if ($query && in_array(strtolower($query), ['asc', 'desc'])) {
-
-            $posts = Post::with('user')->orderBy("title", $query)->paginate(3);
-
+        if ($query && in_array($query, ['asc', 'desc'])) {
+            $posts = Post::with('user')->orderBy("id", $query)->paginate(3);
         } else {
-            // Default to "asc" if the provided order is invalid
-            $posts = Post::with('user')->orderBy("title",'asc')->paginate(3);
+            // Default to "asc" if the provided order is invalid or not present
+            $posts = Post::with('user')->orderBy("id", 'asc')->paginate(3);
         }
 
-     
 
-        
 
         return Inertia::render('Posts/Index',compact('posts'));
 
@@ -112,8 +107,17 @@ class PostController extends Controller
                 "user_id"=> auth()->user()->id
              ]);
              
+
+
+          Mail::send("mail",[auth()->user()->name],function($message){
+
+            $message->to(auth()->user()->email,'Med Blog')
+            ->subject('This is an email testing laravel app');
+
+          });
+
             return to_route('posts.index')->with('success','Post added successfully');
-        
+        // 
       
     }
 

@@ -20,7 +20,6 @@ Route::middleware('auth')->group(function(){
         Route::get('dashboard','charts')->name('dashboard');
     });
 
-
     Route::resource('tags',TagController::class)->except(['create', 'edit', 'show']);
     Route::resource('categories',CategoryController::class)->except(['create', 'edit', 'show']);
     Route::resource('post_tag',PostTagController::class)->except(['create', 'edit', 'show']);;

@@ -9,8 +9,6 @@ import Swal from 'sweetalert2';
 
 function Index({ auth,posts,flash }) {
 
-    // const {flash} = usePage().props;
-
     const { data, setData, errors, post } = useForm({
         title: "",
         description: "",
@@ -18,18 +16,24 @@ function Index({ auth,posts,flash }) {
    
 
     const [searchTerm, setSearchTerm] = useState('');
+    const [sortingOrder,setSortingOrder] = useState('asc')
     
-    // search change input
+    // handle search change 
     const handleInputChange = (e) => {
         setSearchTerm(e.target.value);
       
     };
-  
-    // store image
+    // handle order change
+    const handleSortingChange = (e) =>{
+        setSortingOrder(e.target.value)
+    }
+
+    // handle image change
     const handleImageChange = (e) => {
         setData('image', e.target.files[0])
     
     };
+
     // store
     const handleSubmit = (e) => {
     e.preventDefault()
@@ -59,17 +63,26 @@ function Index({ auth,posts,flash }) {
             }
           });
     }
-    // search
-          // handleSearch 
-          const handleSearch = () => {
-            // Perform the search and redirect to the search results page
-    
-            Inertia.get(route('posts.index'),{search:searchTerm} );
-          };
-    useEffect(() => {
-        handleSearch();
 
-    }, [flash,searchTerm]);
+    // search
+    const handleSearch = () => {
+
+    Inertia.get(route('posts.index'),{search:searchTerm} );
+    };
+
+    // order 
+    //  const handleSorting = () =>{
+    //     Inertia.get(route('posts.orderby'),{orderby:sortingOrder} );
+
+    // }
+
+    useEffect(() => {
+
+        handleSearch();
+        // handleSorting();
+
+
+    }, [flash,searchTerm,sortingOrder]);
 
     return (
         <AuthenticatedLayout
@@ -163,25 +176,36 @@ function Index({ auth,posts,flash }) {
                     {/* modal */}
 
 
+
+                        
                     <div className="overflow-x-auto">
 
-
+                        {/* search */}
                         <div className="my-2 flex justify-end">
 
-                        <form  onSubmit={handleSearch} method='get'>
-                        <input
-                         type="text"
-                          name='search' 
-                          value={searchTerm} 
-                          onChange={handleInputChange} 
-                        //  onChange={(e) =>setSearchTerm(e.target.value)}
-                           className="input input-bordered  mx-2 mb-2" 
-                          placeholder='search ...' />
-                          
-                        <button type='submit' className='btn btn-outline btn-success'>Search</button>
+                            <form  onSubmit={handleSearch} method='get'>
+                            <input
+                            type="text"
+                            name='search' 
+                            value={searchTerm} 
+                            onChange={handleInputChange} 
+                            className="input input-bordered  mx-2 mb-2" 
+                            placeholder='search ...' />
+                            
+                            <button type='submit' className='btn btn-outline btn-success'>Search</button>
 
-                        </form>
+                            </form>
                         </div>
+
+
+                      {/* orderby */}
+                        {/* <select name='orderby' 
+                        value={sortingOrder}
+                        onChange={handleSortingChange}
+                        className="select w-full max-w-xs">
+                            <option value='asc'>Ascending</option>
+                            <option value='desc'>Descending</option>
+                        </select> */}
 
                         <table className="table  rounded  bg-gray-500  text-center shadow-sm" >
                             {/* head */}
