@@ -4,10 +4,6 @@ import Chart from "react-apexcharts";
 import { useEffect, useState } from 'react';
 export default function Dashboard({ auth,postsByDay,commentsByDay }) {
     
-   
-    
-     
-    
     //   ------------------------------posts by day ------------------------------ 
     const [chartPostDonutData, setChartPostDonutData] = useState({
         options: {

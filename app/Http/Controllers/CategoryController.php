@@ -11,9 +11,15 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-         $categories = Category::paginate(3);
+        if($request->filled('search')){
+
+            $categories = Category::search(trim($request->search))->paginate(3);
+
+        }else{
+            $categories = Category::paginate(3);
+        }
 
          return Inertia::render('Categories/Index',compact("categories"));
     }

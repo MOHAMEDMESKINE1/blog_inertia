@@ -4,68 +4,20 @@ import Pagination from '@/Components/Pagination';
 import { Link, useForm } from '@inertiajs/react';
 import { Inertia } from '@inertiajs/inertia';
 import { debounce } from 'lodash';
-// import { Editor } from '@tinymce/tinymce-react';
-/*
-  <div id="editor">
-<Editor
-value={data.description}
-textareaName='description'
-onChange={(e)=> setData("description",e.target.value)}
-apiKey='9ht12wb5tyqgqpg6jr12rkaora4vvi3qq3fb4fdlpdvwpe4v'
-init={{
-plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate ai mentions tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss',
-toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
-tinycomments_mode: 'embedded',
-tinycomments_author: 'Author name',
-mergetags_list: [
-{ value: 'First.Name', title: 'First Name' },
-{ value: 'Email', title: 'Email' },
-],
-ai_request: (request, respondWith) => respondWith.string(() => Promise.reject("See docs to implement AI Assistant")),
-}}
-initialValue="Welcome to TinyMCE!"
-/>
-</div>
-*/
+import Search from '@/Components/blog/Search.jsx'
+import Table from '@/Components/blog/Table';
+import Modal from '@/Components/blog/Modal.jsx';
+import InputError from '@/Components/InputError';
+import TextInput from '@/Components/TextInput';
+import PrimaryButton from '@/Components/PrimaryButton';
+
 
 function Index({ auth,posts }) {
 
-    const { data, setData, errors, post } = useForm({
+    const { data, setData, errors, post,processing } = useForm({
         title: "",
         description: "",
     });
-   
-
-    const [searchTerm, setSearchTerm] = useState('');
-    // const [orderby, setOrderby] = useState('');
-
-    const debounceSearch = debounce((term)=>{
-
-        Inertia.get(route('posts.index', { search: term }));
-          
-    },500)
-  
-    const handleInputChange = (e) => {
-        const newSearchTerm = e.target.value;
-        setSearchTerm(newSearchTerm);
-        debounceSearch(newSearchTerm)
-
-    };
-
-    // const handleOrderbyChange = (newOrderby) => {
-    //     // setOrderby( e.target.value)
-    //     // const order = e.target.value;
-
-    //     setOrderby(newOrderby);
-    //     Inertia.get(route('posts.orderby', {orderby:newOrderby}));
-
-    //     // Inertia.get(`/posts?order=${newOrderby}`);
-
-        
-
-    // };
-
-
    
     const handleImageChange = (e) => {
         setData('image', e.target.files[0])
@@ -76,11 +28,51 @@ function Index({ auth,posts }) {
 
         post(route('posts.store'))
     }
-    const deletePost = (id) => {
-       
 
+    const deletePost = (id) => {
+    
         Inertia.delete(route('posts.destroy',id))
     }
+
+
+
+
+
+    // display   table  data
+    let headers = [ "#","IMAGE","TITLE","DESCRIPTION","POSTED BY","ACTIONS"]
+    
+    const renderCell = (post, header) => {
+        switch (header) {
+          case '#':
+            return post.id;
+          case 'IMAGE':
+            return <div>
+                { post.image ?
+                    <img  className='mask mask-hexagon-2' src={"storage/posts/"+post.image} alt="" width={55} />
+                    :
+                    <img src={post.image} alt="" width={55} />
+                };
+            </div>
+          case 'TITLE':
+            return post.title;
+          case 'DESCRIPTION':
+            return post.description;
+          case 'POSTED BY':
+            return post.user.name;
+
+          case 'ACTIONS':
+            return <div className='flex flex-row jsutify-between'>
+
+                <Link  href={route('posts.show',post.id)} className='mx-2 p-1.5 rounded-sm text-white font-bold bg-green-500'>Details</Link>
+                <Link  href={route('posts.edit',post.id)} className='mx-2 p-1.5 rounded-sm text-white font-bold bg-indigo-500'>Edit</Link>
+                <button onClick={()=>deletePost(post.id)}   className='mx-2 p-1.5 rounded-sm text-white font-bold bg-red-500'>Delete</button>
+
+            </div>;
+          default:
+            return ''; // Handle additional headers if needed
+        }
+      };
+
     return (
         <AuthenticatedLayout
         user={auth.user}
@@ -92,113 +84,66 @@ function Index({ auth,posts }) {
                 <div className="bg-white p-12 overflow-hidden shadow-sm sm:rounded-lg">
                     <h1 className=''>Posts</h1>
                     {/* modal */}
-                        <div className="flex justify-end w-full">
-                        <button className="btn btn-outline text-gray-900 p-1.5 rounded-sm shadow-sm my-3 "  onClick={()=>document.getElementById('createModal').showModal()}>Create Poste</button>
-                            <dialog id="createModal" className="modal">
-                            <div className="modal-box  w-full">
-                                <form method="dialog ">
-                                {/* if there is a button in form, it will close the modal */}
-                                <p onClick={()=>document.getElementById('createModal').close()}    className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</p>
-                                </form>
-                                <h3 className="font-bold text-lg mb-1">Create Poste</h3>
-                                <form onSubmit={handleSubmit}   encType='multipart/form-data'>
-                                    
-                                    <div className="mb-2">
-                                    <input type="text" name='title' value={data.title}  onChange={(e)=> setData("title",e.target.value)}  placeholder="Type here" className="input input-bordered w-full mb-2" />
-                                        <span className="text-red-500">
-                                            {errors.title}
-                                        </span>
-                                    </div>
-                                   
-                                    <div className="mb-2">
-                                    <textarea name='description' value={data.description}  onChange={(e)=> setData("description",e.target.value)} className="textarea textarea-bordered w-full mb-2" placeholder="Bio"></textarea>
-                                        <span className="text-red-500">
-                                            {errors.description}
-                                        </span>
-                                    </div>
+                    <div className="flex justify-end w-full">
+                        
+                        <PrimaryButton  onClick={()=>document.getElementById('createModal').showModal()}>Create Poste</PrimaryButton>
+                            
+                        <Modal id={'createModal'} title={'Create Post'}>
+                            <form onSubmit={handleSubmit}   encType='multipart/form-data'>
+                                
+                            <div className="mb-2">
+                                <TextInput
+                                    id="title"
+                                    type="title"
+                                    name="title"
+                                    value={data.title}
+                                    className="input input-bordered w-full mb-2"
+                                    autoComplete="username"
+                                    isFocused={true}
+                                    onChange={(e) => setData('title', e.target.value)}
+                                />
 
-                                    
-                                    
-                                    <div className="mb-2">
-                                    <input type="file" name='image' onChange={handleImageChange} className="file-input file-input-bordered w-full mb-2 " />
-                                    <span className="text-red-500">
-                                            {errors.image}
-                                    </span>
-                                    </div>
-
-                                    <button type='submit' className='btn mt-2 w-50'>Save </button>
-                                </form>
+                                <InputError message={errors.title} className="mt-2" />
                             </div>
-                            </dialog>
-                        </div>
+                            
+                            <div className="mb-2">
+                                    <textarea name='description' value={data.description}  onChange={(e)=> setData("description",e.target.value)} className="textarea textarea-bordered w-full mb-2" placeholder="Bio"></textarea>
+                                    <InputError message={errors.description} className="mt-2" />
+                            </div>
+                            <div className="mb-2">
+                                <TextInput
+                                    id="image"
+                                    type="file"
+                                    name="image"
+                                    className="input input-bordered w-full mb-2"
+                                    autoComplete="image"
+                                    isFocused={true}
+                                    onChange={handleImageChange}
+                                />
+                                <InputError message={errors.title} className="mt-2" />
+
+                                </div>
+                                <div className="modal-action">
+                                    <PrimaryButton disabled={processing} type='submit' className='btn mt-2 w-50'>Save </PrimaryButton>
+                                    <PrimaryButton rimaryButton  onClick={()=>document.querySelector('#createModal').close()} className='btn mt-2 w-50'>Cancel</PrimaryButton>
+                                </div>
+
+                            </form>
+                            </Modal>
+                    </div>
                     {/* modal */}
 
 
-                    <div className="overflow-x-auto">
-
-
-                        <div className="my-2 flex justify-end">
-
-                        <input className="input input-bordered  mx-2 mb-2" placeholder='search ...' type="text" name='search' value={searchTerm} onChange={handleInputChange} />
-                        {/* <button className='btn btn-outline btn-success' onClick={debounceSearch}>Search</button> */}
-
-                        </div>
-
-                        {/* orderBy */}
-                        {/* <select name='orderby' value={orderby}  onChange={(e) => handleOrderbyChange(e.target.value)}className="select select-bordered w-full max-w-xs">
-                            <option disabled selected>Order By</option>
-                            <option value={'asc'}>Ascending</option>
-                            <option value={'desc'}>Descendig</option>
-                        </select>
-
-                        */}
-
-
-
-                        <table className="table  rounded  bg-gray-500  text-center shadow-sm" >
-                            {/* head */}
-                            <thead className='text-white'>
-                            <tr>
-                                <th>#</th>
-                                <th>IMAGE</th>
-                                <th>TITLE</th>
-                                <th>DESCRIPTION</th>
-                                <th>POSTED BY</th>
-                                <th>ACTION</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {/* row 1 */}
-                             {
-                                posts.data.map(post =>(
-                                    <tr className="bg-base-100">
-                                        <th>{post.id}</th>
-                                        <td >
-                                            { post.image ?
-                                                <img  className='mask mask-hexagon-2' src={"storage/posts/"+post.image} alt="" width={55} />
-                                                :
-                                                <img src={post.image} alt="" width={55} />
-                                             }
-                                        </td>
-                                        
-                                        <td>{post.title}</td>
-                                        <td>{post.description?.slice(10,80)}...</td>
-                                        <td>{post.user.name}</td>
-                                        <td>
-                                            <div className="flex flex-row jsutify-between">
-                                                <Link  href={route('posts.show',post.id)} className='mx-2 p-1.5 rounded-sm text-white font-bold bg-green-500'>Details</Link>
-                                                <Link  href={route('posts.edit',post.id)} className='mx-2 p-1.5 rounded-sm text-white font-bold bg-indigo-500'>Edit</Link>
-                                                <button onClick={()=>deletePost(post.id)}   className='mx-2 p-1.5 rounded-sm text-white font-bold bg-red-500'>Delete</button>
-                                               
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    
-                                ))
-                                
-                             }
-                            </tbody>
-                        </table>
+                    <div className="overflow-x-auto"> 
+                    
+                      <Search url={route('posts.index')} />
+                      <Table
+                     
+                       data={posts.data} 
+                       headers={headers} 
+                       renderCell={renderCell}
+                       />
+ 
                     </div>    
 
                     <div className="flex justify-center my-5">

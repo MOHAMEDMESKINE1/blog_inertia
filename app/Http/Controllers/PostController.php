@@ -35,30 +35,34 @@ class PostController extends Controller
             'commentsByDay' => $commentsByDay,
         ]);
     }
-    public function index()
+    public function index( Request $request)
     {
         // Check if a search query is present
-        $searchQuery = request()->input('search');
+        $searchQuery =$request->search;
     
-        // If there's a search query, filter posts by title; otherwise, get all posts
-        $postsQuery =!empty( $searchQuery)
-            ? Post::with('user')
-                    ->where(function ($query) use ($searchQuery) {
+        /* If there's a search query, filter posts by title; otherwise, get all posts
+            // $postsQuery =!empty( $searchQuery)
+            //     ? Post::with('user')
+            //             ->where(function ($query) use ($searchQuery) {
 
-                        $query->where('title', 'like', '%' . strtoupper($searchQuery) . '%')
+            //                 $query->where('title', 'like', '%' . strtoupper($searchQuery) . '%')
 
-                         ->orWhereHas('user', function ($userQuery) use ($searchQuery) {
+            //                  ->orWhereHas('user', function ($userQuery) use ($searchQuery) {
 
-                          $userQuery->where('name', 'like', '%' .strtoupper($searchQuery). '%');
-                        });
-            })
-            : Post::with('user');
-    
-        // Paginate the results
-
-            $posts = $postsQuery->paginate(3);
+            //                   $userQuery->where('name', 'like', '%' .strtoupper($searchQuery). '%');
+            //                 });
+            //     })
+            //     : Post::with('user');
+        */
         
-         
+        if($request->filled('search')){
+
+          $posts = Post::search(trim($searchQuery))->paginate(3);
+          $posts->load('user');
+
+        }else{
+            $posts = Post::with('user')->paginate(3);
+        }
 
        return Inertia::render('Posts/Index',compact('posts'));
     }

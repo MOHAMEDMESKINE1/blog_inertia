@@ -9,10 +9,11 @@ use App\Models\Comment;
 use App\Models\Category;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Laravel\Scout\Searchable;
 
 class Post extends Model
 {
-    use HasFactory;
+    use HasFactory ,Searchable;
     protected $table = 'posts';
     protected $fillable = [
         'title',
@@ -25,11 +26,7 @@ class Post extends Model
         return Carbon::parse($value)->diffForHumans();
     }
     
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
-
+  
     public function category()
     {
         return $this->belongsTo(Category::class);
@@ -44,5 +41,18 @@ class Post extends Model
     {
         return $this->belongsToMany(Tag::class,'tag_id');
     }
-    
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function toSearchableArray()
+    {
+        $users=[
+            "id"=> $this->id,
+            "title"=>$this->title,
+            "description"=>$this->description,
+        ];
+        return $users;
+    }
 }

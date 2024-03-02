@@ -6,10 +6,11 @@ use Carbon\Carbon;
 use App\Models\Post;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Laravel\Scout\Searchable;
 
 class Category extends Model
 {
-    use HasFactory;
+    use HasFactory,Searchable;
     protected $guarded = [""];
 
     public function posts()
@@ -20,4 +21,12 @@ class Category extends Model
     {
         return Carbon::parse($value)->diffForHumans();
     }
+    public function toSearchableArray()
+    {
+        return [
+            "id"=> $this->id,
+            "name"=>$this->name,
+        ];
+    }
+    
 }

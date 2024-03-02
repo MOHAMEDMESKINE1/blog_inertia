@@ -100,7 +100,8 @@ function Index({ auth,postTags  }) {
                             <tr>
                                 <th>#</th>
                                
-                                <th>NAME</th>
+                                <th>Posts</th>
+                                <th>Tag</th>
                                 <th>CREATED_AT</th>
                                
                                 <th>ACTION</th>
@@ -115,12 +116,18 @@ function Index({ auth,postTags  }) {
                                    
                                         
                                         <th>
-                                        {/* {
+                                        {
                                             postTag.posts.map(post =>(
                                                 <th>{post.title}</th>
                                             ))
-                                        } */}
-                                        {postTag.title}
+                                        }
+                                        </th>
+
+                                        <th>
+                                        {
+                                            postTag.tags.name
+                                        }
+                                    
                                         </th>
                                         <th>{postTag.created_at}</th>
                                        

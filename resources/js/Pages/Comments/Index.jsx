@@ -4,6 +4,7 @@ import Pagination from '@/Components/Pagination';
 import {  useForm } from '@inertiajs/react';
 import { Inertia } from '@inertiajs/inertia';
 import Swal from "sweetalert2";  
+import Search from '@/Components/blog/Search.jsx'
 
 function Index({auth,posts,comments}) {
     const { data, setData, errors, post } = useForm({
@@ -113,7 +114,10 @@ function Index({auth,posts,comments}) {
                           </dialog>
                       </div>
                     {/*  Create modal */}
-                    
+
+
+                    <Search url={'comments.index'}/>
+
                     <table className="table  rounded  bg-gray-500  text-center shadow-sm" >
                         {/* head */}
                         <thead className='text-white'>

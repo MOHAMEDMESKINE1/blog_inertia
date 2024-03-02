@@ -17,6 +17,7 @@ use Inertia\Inertia;
 */
 
 Route::get('/', function () {
+    
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
@@ -24,6 +25,7 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 });
+
 
 // Route::get('/dashboard', function () {
 //     return Inertia::render('Dashboard');

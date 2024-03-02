@@ -9,9 +9,18 @@ use Inertia\Inertia;
 class TagController extends Controller
 {
     
-    public function index()
+    public function index(Request $request)
     {
-        $tags =Tag::paginate(3);
+        
+        if($request->filled('search')){
+
+            $tags = Tag::search($request->search)->paginate(3);
+
+        }else{
+            $tags = Tag::paginate(3);
+        }
+
+      
 
         return Inertia::render('Tags/Index',compact('tags'));
     }

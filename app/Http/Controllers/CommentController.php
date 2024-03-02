@@ -13,9 +13,20 @@ class CommentController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $comments  = Comment::with(['user','post'])->paginate(3);
+        
+        if($request->filled('search')){
+
+            $comments = Comment::search(trim($request->search))->paginate(3);
+            $comments->load('user');
+            $comments->load('post');
+          }else{
+            $comments  = Comment::with(['user','post'])->paginate(3);
+
+          }
+
+        // $comments  = Comment::with(['user','post'])->paginate(3);
         $posts = Post::all();
 
         return Inertia::render('Comments/Index',compact('comments','posts'));

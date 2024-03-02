@@ -4,13 +4,13 @@ import Pagination from '@/Components/Pagination';
 import { Link, useForm } from '@inertiajs/react';
 import { Inertia } from '@inertiajs/inertia';
 import Swal from "sweetalert2";  
-
+import Search from '@/Components/blog/Search.jsx'
 function Index({ auth,tags }) {
 
     const { data, setData, errors, post } = useForm({
         name: "",
-       
     });
+
     const [editingTag, setEditingTag] = useState(null);
     const [form, setForm] = useState({ name: '' });
 
@@ -19,7 +19,7 @@ function Index({ auth,tags }) {
         setForm({ name: tag.name }); // Assuming the tag has a 'name' property
        
       };
-   
+  
     // update tag
     const updateTag = (e) => {
         e.preventDefault()
@@ -90,10 +90,16 @@ function Index({ auth,tags }) {
                                     </form>
                                 </div>
                             </dialog>
-                        </div>
+                        </div>  
                     
                     {/*  Create modal */}
+
                     <div className="overflow-x-auto">
+
+                    <Search url={route('tags.index')}/>
+
+
+
                         <table className="table  rounded  bg-gray-500  text-center shadow-sm" >
                             {/* head */}
                             <thead className='text-white'>

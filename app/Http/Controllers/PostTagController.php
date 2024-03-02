@@ -14,8 +14,8 @@ class PostTagController extends Controller
      */
     public function index()
     {
-        $postTags  = PostTag::with(['posts'])->paginate(3);
-        dd($postTags);
+        $postTags  = PostTag::with(['posts','tags'])->paginate(3);
+        // dd($postTags);
         return Inertia::render('PostTags/Index',compact('postTags'));
     }
 
