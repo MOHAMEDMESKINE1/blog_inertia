@@ -3,61 +3,75 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import Pagination from '@/Components/Pagination';
 import { Link, useForm } from '@inertiajs/react';
 import { Inertia } from '@inertiajs/inertia';
-import Swal from "sweetalert2";  
 import Search from '@/Components/blog/Search.jsx'
-function Index({ auth,tags }) {
+import useTags from '@/composables/tags/useTags.jsx';
+import PrimaryButton from '@/Components/PrimaryButton';
+import Modal from '@/Components/blog/Modal.jsx';
+import TextInput from '@/Components/TextInput';
+import InputError from '@/Components/InputError';
+import InputLabel from '@/Components/InputLabel';
+import FlashMessage from '@/Components/blog/FlashMessage';
+import Table from '@/Components/blog/Table';
+function Index({ auth,tags ,flash}) {
 
-    const { data, setData, errors, post } = useForm({
+    const {deleteTag} = useTags()
+    const { data, setData, errors, progress,post } = useForm({
         name: "",
     });
 
-    const [editingTag, setEditingTag] = useState(null);
     const [form, setForm] = useState({ name: '' });
+    const [editingTag, setEditingTag] = useState(null);
 
     const openEditModal = (tag) => {
         setEditingTag(tag);
         setForm({ name: tag.name }); // Assuming the tag has a 'name' property
        
       };
-  
-    // update tag
-    const updateTag = (e) => {
-        e.preventDefault()
-       
-        Inertia.put(route('tags.update', { tag: editingTag.id }), form);
-        setEditingTag(null);
-    }
 
     // add tag
     const handleSubmit = (e) => {
         e.preventDefault()
-
-        post(route('tags.store'))
+        post(route('tags.store'))     
     }
     // delete tag
-    const deleteTag = (id) => {
-
-        Swal.fire({
-            title: "Are you sure?",
-            text: "You won't be able to revert this!",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Yes, delete it!"
-          }).then((result) => {
-            if (result.isConfirmed) {
-
-                Inertia.delete(route('tags.destroy',id))
-                Swal.fire({
-                    title: "Deleted!",
-                    text: "Your file has been deleted.",
-                    icon: "success"
-                });
-            }
-          });
+    const destroyTag = (id) => {
+        deleteTag(id)
+       
     }
-   
+    // update tag
+    const updateTag = (e) => {
+        e.preventDefault()
+        Inertia.put(route('tags.update', { tag: editingTag.id }), form);
+        setEditingTag(null);
+    }
+
+    //    tags table
+    let headers = [ "#","NAME","ACTIONS"]
+    const renderCell = (tag, header) => {
+        switch (header) {
+        case '#':
+            return tag.id;
+        case 'NAME':
+            return tag.name;
+        case 'ACTIONS':
+            return <div className='flex flex-row jsutify-between'>
+
+                        <div className="flex  justify-center mx-auto">
+                            <button  className='mx-2 p-1.5 rounded-sm text-white font-bold bg-green-500'
+                                onClick={() => {
+                                    openEditModal(tag)
+                                    document.getElementById('editModal').showModal()
+
+                            }  }>Edit</button>
+                            <button onClick={()=>destroyTag(tag.id)}   className='mx-2 p-1.5 rounded-sm text-white font-bold bg-red-500'>Delete</button>
+                        </div>
+
+                    </div>
+        default:
+            return ''; // Handle additional headers if needed
+        }
+    };
+
     return (
         <AuthenticatedLayout
         user={auth.user}
@@ -67,30 +81,45 @@ function Index({ auth,tags }) {
             
             <div className="mx-auto sm:px-6 lg:px-8">
                 <div className="bg-white p-12 overflow-hidden shadow-sm sm:rounded-lg">
+
                     <h1 className=''>Posts</h1>
-                    {/* modal */}
-                        <div className="flex justify-end w-full">
-                        <button className="btn btn-outline btn-info  w-56 text-gray-900 w-75 p-1.5 rounded-sm shadow-sm my-3 "  onClick={()=>document.getElementById('createModal').showModal()}>Add Tag</button>
-                            <dialog id="createModal" className="modal">
-                                <div className="modal-box  w-full">
-                                    <form method="dialog ">
-                                    <p onClick={()=>document.getElementById('createModal').close()}    className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</p>
-                                    </form>
-                                    <h3 className="font-bold text-lg mb-1">Add Tag</h3>
-                                    <form onSubmit={handleSubmit}   encType='multipart/form-data'>
-                                        
-                                        <div className="mb-2">
-                                        <input type="text" name='name' value={data.name}  onChange={(e)=> setData("name",e.target.value)}  placeholder="Type here" className="input input-bordered w-full mb-2" />
-                                            <span className="text-red-500">
-                                                {errors.name}
-                                            </span>
-                                        </div>
-                                    
-                                        <button type='submit' className='btn mt-2 w-50'>Save </button>
-                                    </form>
+                   
+                    {/* message */}
+                    <FlashMessage flash={flash}/>
+
+
+                    {/* Create modal */}
+                    <div className="flex justify-end w-full">
+                        
+                        <PrimaryButton  onClick={()=>document.getElementById('createModal').showModal()}>Create Tag</PrimaryButton>
+                        {/* modal */}
+                        <Modal id={'createModal'} name={'Create Post'}>
+                            <p onClick={()=>document.getElementById('createModal').close()}    className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</p>
+
+                            <form onSubmit={handleSubmit}   encType='multipart/form-data'>
+                                <div className="mb-2">
+                                    <InputLabel htmlFor="name" value="Create Tag" className='font-bold text-xl text-white mb-1' />                                    <TextInput
+                                        id="name"
+                                        type="text"
+                                        name="name"
+                                        value={data.name}
+                                        className="input input-bordered w-full mb-2"
+                                        autoComplete="username"
+                                        isFocused={true}
+                                        onChange={(e) => setData('name', e.target.value)}
+                                    />
+                                    <InputError message={errors.name} className="mt-2" />
                                 </div>
-                            </dialog>
-                        </div>  
+
+                                <div className="modal-action">
+                                    <PrimaryButton disabled={progress} type='submit' className='btn mt-2 w-50'>Save </PrimaryButton>
+                                    <PrimaryButton   onClick={()=>document.querySelector('#createModal').close()} className='btn mt-2 w-50'>Cancel</PrimaryButton>
+                                </div>
+
+                            </form>
+                        </Modal>
+                        {/* modal */}
+                    </div>
                     
                     {/*  Create modal */}
 
@@ -98,77 +127,44 @@ function Index({ auth,tags }) {
 
                     <Search url={route('tags.index')}/>
 
+                    <Table
+                     
+                       data={tags.data} 
+                       headers={headers} 
+                       renderCell={renderCell}
+                    />    
 
 
-                        <table className="table  rounded  bg-gray-500  text-center shadow-sm" >
-                            {/* head */}
-                            <thead className='text-white'>
-                            <tr>
-                                <th>#</th>
-                               
-                                <th>NAME</th>
-                                <th>CREATED_AT</th>
-                               
-                                <th>ACTION</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {/* row 1 */}
-                             {
-                                tags.data.map(tag =>(
-                                    <tr  key={tag.id} className="bg-base-100">
-                                        <th>{tag.id}</th>
-                                       
-                                        
-                                        <td>{tag.name}</td>
-                                        <td>{tag.created_at}</td>
-                                       
-                                        <td>
-                                            <div className="flex  justify-center mx-auto">
-                                                <button  className='mx-2 p-1.5 rounded-sm text-white font-bold bg-green-500'
-                                                 onClick={() => {
-                                                     openEditModal(tag)
-                                                     document.getElementById('editModal').showModal()
-
-                                                }  }>Edit</button>
-                                                <button onClick={()=>deleteTag(tag.id)}   className='mx-2 p-1.5 rounded-sm text-white font-bold bg-red-500'>Delete</button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    
-                                ))
-                                
-                             }
-                            </tbody>
-                        </table>
                     </div>    
                     
                     {/* Edit Modal */}
-                        <dialog  id="editModal" className="modal">
-                            <div className="modal-box  w-full">
-                                <form method="dialog ">
-                                <p onClick={()=>document.getElementById('editModal').close()}    className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</p>
-                                </form>
-                                <h3 className="font-bold text-lg mb-1">Edit Tag</h3>
-                                <form  >
-                                    
-                                    <div className="mb-2">
-                                    <input type="text"
-                                     name='name'
-                                     required
-                                     value= {form.name}   
-                                     onChange={(e) => setForm({ ...form, name: e.target.value })}  placeholder="Type here" className="input input-bordered w-full mb-2" />
-                                        <span className="text-red-500">
-                                            {errors.name}
-                                        </span>
-                                    </div>
-                                   
-                                    <button onClick={updateTag} className='btn mt-2 w-50'>Save </button>
-                                    <div  className='btn mt-2 w-50 mx-2' onClick={() => document.getElementById('editModal').close()}>Cancel</div>
-                                </form>
-                            </div>
-                         </dialog>
+                       
+                        <Modal id={'editModal'} name={'Update Tag'}>
+                            <p onClick={()=>document.getElementById('editModal').close()}    className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</p>
+                            <form onSubmit={updateTag}   encType='multipart/form-data'>
+                                <div className="mb-2">
+                                    <InputLabel htmlFor="name" value="Update Tag" className='font-bold text-xl text-white mb-1' />                                    <TextInput
+                                        id="name"
+                                        type="text"
+                                        name="name"
+                                        value= {form.name}   
+                                        onChange={(e) => setForm({ ...form, name: e.target.value })}
+                                        className="input input-bordered w-full mb-2"
+                                        autoComplete="username"
+                                        isFocused={true}
+                                    />
+                                    <InputError message={errors.name} className="mt-2" />
+                                </div>
+
+                                <div className="modal-action">
+                                    <PrimaryButton disabled={progress} type='submit' className='btn mt-2 w-50'>Save </PrimaryButton>
+                                    <PrimaryButton   onClick={()=>document.querySelector('#editModal').close()} className='btn mt-2 w-50'>Cancel</PrimaryButton>
+                                </div>
+
+                            </form>
+                        </Modal>
                     {/* Edit Modal */}
+
                     <div className="flex justify-center my-5">
                             <Pagination links={tags.links}/>
                             

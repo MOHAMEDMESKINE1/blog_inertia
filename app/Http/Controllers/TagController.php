@@ -33,7 +33,7 @@ class TagController extends Controller
 
         Tag::create(["name"=> $request->name]);
 
-        return to_route('tags.index');
+        return to_route('tags.index')->with('success','Tag Created Sucessfully');
     }
 
 
@@ -43,7 +43,7 @@ class TagController extends Controller
 
             $tag->update(["name"=> $request->name]);
 
-            return to_route('tags.index');
+            return to_route('tags.index')->with('success','Tag Updated Sucessfully');
         }
       
     }
@@ -52,6 +52,6 @@ class TagController extends Controller
     {
        $tag->delete();
 
-       return to_route('tags.index')->with('Tag deleted successfully !');
+       return to_route('tags.index')->with('success','Tag deleted successfully !');
     }
 }
