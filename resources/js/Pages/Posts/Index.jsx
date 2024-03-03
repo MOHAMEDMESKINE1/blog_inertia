@@ -4,9 +4,9 @@ import Pagination from '@/Components/Pagination';
 import { Link, useForm } from '@inertiajs/react';
 import { Inertia } from '@inertiajs/inertia';
 import { debounce } from 'lodash';
-import Search from '@/Components/blog/Search.jsx'
-import Table from '@/Components/blog/Table';
-import Modal from '@/Components/blog/Modal.jsx';
+import Search from '@/Components/blog/components/Search.jsx'
+import Table from '@/Components/blog/components/Table';
+import Modal from '@/Components/blog/components/Modal.jsx';
 import InputError from '@/Components/InputError';
 import TextInput from '@/Components/TextInput';
 import PrimaryButton from '@/Components/PrimaryButton';

@@ -11,7 +11,7 @@ use Laravel\Scout\Searchable;
 class Comment extends Model
 {
     use HasFactory,Searchable;
-    protected $guarded = [""];
+    protected $fillable = ["post_id","user_id","content"];
 
     public function user()
     {

@@ -66,11 +66,16 @@ class CommentController extends Controller
     public function update(Request $request,Comment $comment)
     {
 
+      if(!empty($request)){
+
         $comment->update([
-            "post"=>$request->post,
+            "post_id"=>intval($request->post),
             "user_id"=>auth()->user()->id,
             "content"=>$request->content,
         ]);
+        return to_route('comments.index')->with('success','comment updated successfully');
+
+      }
     }
 
     /**

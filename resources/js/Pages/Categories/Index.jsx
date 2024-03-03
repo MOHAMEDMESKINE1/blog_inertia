@@ -4,7 +4,12 @@ import Pagination from '@/Components/Pagination';
 import {  useForm } from '@inertiajs/react';
 import { Inertia } from '@inertiajs/inertia';
 import Swal from "sweetalert2";  
-import Search from '@/Components/blog/Search.jsx'
+import Search from '@/Components/blog/components/Search.jsx'
+import Modal from '@/Components/blog/components/Modal.jsx';
+import TextInput from '@/Components/TextInput';
+import InputError from '@/Components/InputError';
+import PrimaryButton from '@/Components/PrimaryButton';
+import Table from '@/Components/blog/components/Table';
 
 function Index({ auth,categories }) {
 
@@ -58,7 +63,37 @@ function Index({ auth,categories }) {
             }
           });
     }
-   
+    
+    // categories table
+     let headers = [ "#","NAME","CREATED_AT","ACTIONS"]
+     const renderCell = (category, header) => {
+         switch (header) {
+         case '#':
+             return category.id;
+         case 'NAME':
+             return category.name;
+         case 'CREATED_AT':
+             return category.created_at;
+         case 'ACTIONS':
+             return <div className='flex flex-row jsutify-between'>
+ 
+                         <div className="flex  justify-center mx-auto">
+                             <button  className='mx-2 p-1.5 rounded-sm text-white font-bold bg-green-500'
+                                 onClick={() => {
+                                     openEditModal(category)
+                                     document.getElementById('editModal').showModal()
+ 
+                             }  }>Edit</button>
+                             <button onClick={()=>deleteCategory(category.id)}   className='mx-2 p-1.5 rounded-sm text-white font-bold bg-red-500'>Delete</button>
+                         </div>
+ 
+                    </div>
+         default:
+             return ''; // Handle additional headers if needed
+         }
+     };
+
+
     return (
         <AuthenticatedLayout
         user={auth.user}
@@ -72,102 +107,67 @@ function Index({ auth,categories }) {
                   
                     {/* Create modal */}
                         <div className="flex justify-end w-full">
-                        <button className="btn btn-outline btn-info  w-56 text-gray-900 w-75 p-1.5 rounded-sm shadow-sm my-3 "  onClick={()=>document.getElementById('createModal').showModal()}>Add Category</button>
-                            <dialog id="createModal" className="modal">
-                                <div className="modal-box  w-full">
-                                    <form method="dialog ">
-                                    <p onClick={()=>document.getElementById('createModal').close()}    className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</p>
-                                    </form>
-                                    <h3 className="font-bold text-lg mb-1">Add category</h3>
-                                    <form onSubmit={handleSubmit}   encType='multipart/form-data'>
+                        <PrimaryButton onClick={()=>document.getElementById('createModal').showModal()}>Add Category</PrimaryButton>
+                            
+                            <Modal id={"createModal"} title={'Add category'} className="modal">
+                                <p onClick={()=>document.getElementById('createModal').close()}    className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</p>
+                                    
+                                    <form onSubmit={handleSubmit}>
                                         
                                         <div className="mb-2">
-                                        <input type="text" name='name' value={data.name}  onChange={(e)=> setData("name",e.target.value)}  placeholder="Type here" className="input input-bordered w-full mb-2" />
-                                            <span className="text-red-500">
-                                                {errors.name}
-                                            </span>
+                                            <TextInput
+                                                id="name"
+                                                type="text"
+                                                name="name"
+                                                value= {data.name}   
+                                                onChange={(e) => setData({'name': e.target.value })}
+                                                className="input input-bordered w-full mb-2"
+                                                autoComplete="username"
+                                                isFocused={true}
+                                            />
+                                            <InputError message={errors.name} className="mt-2" />
                                         </div>
                                     
-                                        <button type='submit' className='btn mt-2 w-50'>Save </button>
+                                        <PrimaryButton type="submit" className='btn mt-2 w-50'>Save </PrimaryButton>
+
                                     </form>
-                                </div>
-                            </dialog>
+                                    
+                            </Modal>
                         </div>
-                    {/*  Create modal */}
 
 
                     {/* search */}
 
                     <Search url={'categories.index'}/>
 
-                    {/* search */}
-                    <div className="overflow-x-auto">
-                        <table className="table  rounded  bg-gray-500  text-center shadow-sm" >
-                            {/* head */}
-                            <thead className='text-white'>
-                            <tr>
-                                <th>#</th>
-                               
-                                <th>NAME</th>
-                                <th>CREATED_AT</th>
-                               
-                                <th>ACTION</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {/* row 1 */}
-                             {
-                                categories.data.map(category =>(
-                                    <tr  key={category.id} className="bg-base-100">
-                                        <th>{category.id}</th>                                        
-                                        <td>{category.name}</td>
-                                        <td>{category.created_at}</td>
-                                       
-                                        <td>
-                                            <div className="flex  justify-center mx-auto">
-                                                <button  className='mx-2 p-1.5 rounded-sm text-white font-bold bg-green-500'
-                                                 onClick={() => {
-                                                     openEditModal(category)
-                                                     document.getElementById('editModal').showModal()
-
-                                                }  }>Edit</button>
-                                                <button onClick={()=>deleteCategory(category.id)}   className='mx-2 p-1.5 rounded-sm text-white font-bold bg-red-500'>Delete</button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    
-                                ))
-                                
-                             }
-                            </tbody>
-                        </table>
-                    </div>    
+                    <Table
+                            data={categories.data} 
+                            headers={headers} 
+                            renderCell={renderCell}
+                        /> 
                     
                     {/* Edit Modal */}
-                        <dialog  id="editModal" className="modal">
-                            <div className="modal-box  w-full">
-                                <form method="dialog ">
-                                <p onClick={()=>document.getElementById('editModal').close()}    className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</p>
-                                </form>
-                                <h3 className="font-bold text-lg mb-1">Edit category</h3>
-                                <form  >
+                        <Modal   id="editModal" title={"Edit Category"} className="modal">
+
+                            <p onClick={()=>document.getElementById('editModal').close()}    className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</p>
                                     
-                                    <div className="mb-2">
-                                    <input type="text"
-                                     name='name'
-                                     required
-                                     value= {form.name}   
-                                     onChange={(e) => setForm({ ...form, name: e.target.value })}  placeholder="Type here" className="input input-bordered w-full mb-2" />
-                                        <span className="text-red-500">
-                                            {errors.name}
-                                        </span>
-                                    </div>
-                                   
-                                    <button onClick={updateCategory} className='btn mt-2 w-50'>Save </button>
-                                    <div  className='btn mt-2 w-50 mx-2' onClick={() => document.getElementById('editModal').close()}>Cancel</div>
-                                </form>
+                            <div className="my-2">
+                                <TextInput
+                                    id="name"
+                                    type="text"
+                                    name="name"
+                                    value= {form.name}   
+                                    onChange={(e) => setForm({ ...form, name: e.target.value })}
+                                    className="input input-bordered w-full mb-2"
+                                    autoComplete="username"
+                                    isFocused={true}
+                                />
+                                <InputError message={errors.name} className="mt-2" />
                             </div>
-                         </dialog>
+                        
+                            <PrimaryButton  onClick={updateCategory}   className='btn mt-2 w-50'>Save </PrimaryButton>
+
+                         </Modal>
                     {/* Edit Modal */}
 
 

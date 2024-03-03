@@ -1,4 +1,3 @@
-import { Link } from '@inertiajs/react';
 import React from 'react';
 
 function Table({data,headers,renderCell}) {

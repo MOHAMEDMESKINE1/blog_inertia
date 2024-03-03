@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Tag;
 use App\Models\Post;
+use Inertia\Inertia;
 use App\Models\PostTag;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
 
 class PostTagController extends Controller
 {
@@ -14,9 +15,12 @@ class PostTagController extends Controller
      */
     public function index()
     {
-        $postTags  = PostTag::with(['posts','tags'])->paginate(3);
-        // dd($postTags);
-        return Inertia::render('PostTags/Index',compact('postTags'));
+
+        $postTags  = PostTag::with('posts','tags')->paginate(3);
+        $posts = Post::select('id','title')->get();
+        $tags = Tag::all();
+
+        return Inertia::render('PostTags/Index',compact('postTags','posts','tags'));
     }
 
     /**
@@ -32,7 +36,9 @@ class PostTagController extends Controller
      */
     public function store(Request $request)
     {
-      
+        PostTag::create($request->all());
+
+        return to_route('post_tag.index')->with('success','Post Tag Added Successfully');
     }
 
     /**
@@ -54,16 +60,25 @@ class PostTagController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, PostTag $postTag)
     {
-        //
+        $postTag->update([
+            
+            "post_id"=>$request->post_id,
+            "tag_id"=>$request->tag_id,
+        ]);
+
+        return to_route('post_tag.index')->with('success','Post Tag updated Successfully');
+
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(PostTag $postTag)
     {
-        //
+        $postTag->delete();
+
+        return to_route('post_tag.index')->with('success','Post Tag Added Successfully');
     }
 }

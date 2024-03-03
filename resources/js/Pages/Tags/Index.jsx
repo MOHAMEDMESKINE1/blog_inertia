@@ -3,15 +3,15 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import Pagination from '@/Components/Pagination';
 import { Link, useForm } from '@inertiajs/react';
 import { Inertia } from '@inertiajs/inertia';
-import Search from '@/Components/blog/Search.jsx'
+import Search from '@/Components/blog/components/Search.jsx'
 import useTags from '@/composables/tags/useTags.jsx';
 import PrimaryButton from '@/Components/PrimaryButton';
-import Modal from '@/Components/blog/Modal.jsx';
+import Modal from '@/Components/blog/components/Modal.jsx';
 import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
-import FlashMessage from '@/Components/blog/FlashMessage';
-import Table from '@/Components/blog/Table';
+import FlashMessage from '@/Components/blog/components/FlashMessage';
+import Table from '@/Components/blog/components/Table';
 function Index({ auth,tags ,flash}) {
 
     const {deleteTag} = useTags()
@@ -91,14 +91,16 @@ function Index({ auth,tags ,flash}) {
                     {/* Create modal */}
                     <div className="flex justify-end w-full">
                         
-                        <PrimaryButton  onClick={()=>document.getElementById('createModal').showModal()}>Create Tag</PrimaryButton>
+                        <PrimaryButton  onClick={()=>document.getElementById('createModal').showModal()} >Create Tag</PrimaryButton>
+                       
                         {/* modal */}
                         <Modal id={'createModal'} name={'Create Post'}>
                             <p onClick={()=>document.getElementById('createModal').close()}    className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</p>
 
                             <form onSubmit={handleSubmit}   encType='multipart/form-data'>
                                 <div className="mb-2">
-                                    <InputLabel htmlFor="name" value="Create Tag" className='font-bold text-xl text-white mb-1' />                                    <TextInput
+                                    <InputLabel htmlFor="name" value="Create Tag" className='font-bold text-xl text-white mb-1' />
+                                    <TextInput
                                         id="name"
                                         type="text"
                                         name="name"
@@ -143,7 +145,8 @@ function Index({ auth,tags ,flash}) {
                             <p onClick={()=>document.getElementById('editModal').close()}    className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</p>
                             <form onSubmit={updateTag}   encType='multipart/form-data'>
                                 <div className="mb-2">
-                                    <InputLabel htmlFor="name" value="Update Tag" className='font-bold text-xl text-white mb-1' />                                    <TextInput
+                                    <InputLabel htmlFor="name" value="Update Tag" className='font-bold text-xl text-white mb-1' />
+                                    <TextInput
                                         id="name"
                                         type="text"
                                         name="name"
@@ -158,7 +161,6 @@ function Index({ auth,tags ,flash}) {
 
                                 <div className="modal-action">
                                     <PrimaryButton disabled={progress} type='submit' className='btn mt-2 w-50'>Save </PrimaryButton>
-                                    <PrimaryButton   onClick={()=>document.querySelector('#editModal').close()} className='btn mt-2 w-50'>Cancel</PrimaryButton>
                                 </div>
 
                             </form>
