@@ -9,9 +9,11 @@
         "algolia/algoliasearch-client-php": "^3.4",
         "guzzlehttp/guzzle": "^7.2",
         "inertiajs/inertia-laravel": "^0.6.3",
+        "jeremykenedy/laravel2step": "^3.1",
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.2",
         "laravel/scout": "^10.8",
+        "laravel/telescope": "^4.17",
         "laravel/tinker": "^2.8",
         "tightenco/ziggy": "^1.0"
     },

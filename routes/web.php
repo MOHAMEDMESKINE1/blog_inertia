@@ -16,7 +16,7 @@ use Inertia\Inertia;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
+Route::view('/mail','mail');
 Route::controller(HomeController::class)->group( function () {
     
     Route::get('/','index');

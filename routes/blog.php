@@ -8,7 +8,7 @@ use App\Http\Controllers\TagController;
 use Illuminate\Support\Facades\Route;
 
 
-Route::middleware('auth')->group(function(){
+Route::middleware('auth', 'twostep')->group(function(){
 
     // posts
     Route::resource('posts',PostController::class);

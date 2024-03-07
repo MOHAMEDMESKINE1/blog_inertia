@@ -168,6 +168,9 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        App\Providers\TelescopeServiceProvider::class,
+        jeremykenedy\laravel2step\laravel2stepServiceProvider::class,
+
     ])->toArray(),
 
     /*
